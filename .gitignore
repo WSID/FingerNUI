@@ -1,0 +1,10 @@
+Library/
+Temp/
+obj/
+
+/*.csproj
+/*.sln
+/*.userprefs
+
+**/*.log
+*.pdb

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<Gesture Name="ㅍ~03">
+    <Stroke index="0">
+        <Point X="0.000" Y="1.000"/>
+        <Point X="1.000" Y="1.000"/>
+    </Stroke>
+    <Stroke index="1">
+        <Point X="0.250" Y="1.000"/>
+        <Point X="0.250" Y="0.000"/>
+    </Stroke>
+    <Stroke index="2">
+        <Point X="0.750" Y="1.000"/>
+        <Point X="0.750" Y="0.000"/>
+    </Stroke>
+    <Stroke index="3">
+        <Point X="0.000" Y="0.000"/>
+        <Point X="1.000" Y="0.000"/>
+    </Stroke>
+</Gesture>
