@@ -9,7 +9,13 @@ using Leap;
 public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 	public float minDownVelocity = 50;
+	public float minForwardVelocity = 50;
+
 	public float historySeconds = 0.1f;
+	public float minDownDistance = 3.0f;
+	public float minForwardDistance = 5.0f;
+
+	public float minPointDistance = 1.0f;
 
 	public HandController handController;
 	private Controller controller;
@@ -45,6 +51,10 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 		controller.Config.SetFloat ("Gesture.KeyTap.MinDownVelocity", minDownVelocity);
 		controller.Config.SetFloat ("Gesture.KeyTap.HistorySeconds", historySeconds);
+		controller.Config.SetFloat ("Gesture.KeyTap.MinDistance", minDownDistance);
+		controller.Config.SetFloat ("Gesture.ScreenTap.MinForwardVelocity", minForwardVelocity);
+		controller.Config.SetFloat ("Gesture.ScreenTap.HistorySeconds", historySeconds);
+		controller.Config.SetFloat ("Gesture.ScreenTap.MinDistance", minForwardDistance);
 		controller.Config.Save ();
 
 		points = new Vector3 [tapTargets.Length];
