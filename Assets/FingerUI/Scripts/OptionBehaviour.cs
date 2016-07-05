@@ -4,14 +4,14 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class OptionBehaviour : MonoBehaviour {
-	public static Dictionary<string, Object> optionResults = null;
+	public static Dictionary<string, object> optionResults = null;
 
 	public const string KEY_OPTION_INPUT_SURFACE = "input-surface";
 
 	// Use this for initialization
 	void Start () {
 		if (optionResults == null) {
-			optionResults = new Dictionary <string, Object> ();
+			optionResults = new Dictionary <string, object> ();
 			Debug.Log ("Option cleared!");
 		}
 	}
