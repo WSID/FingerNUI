@@ -18,10 +18,13 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 	public float minPointDistance = 1.0f;
 
+	public int countdownTime = 15;
+
 	public HandController handController;
 
 	public Text messageText;
 	public string messageFormat;
+	public string messageFormatCountdown;
 
 
 	public UnityEngine.UI.Image[] tapTargets;
@@ -33,6 +36,7 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 	public GameObject canvas;
 
 	public UnityEvent onDone;
+	public UnityEvent onDoneTimeout;
 
 
 	private Vector3[] points;
@@ -70,6 +74,7 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		//Show first target.
 		tapTargets[0].sprite = tapImage;
 		tapTargets[0].gameObject.SetActive (true);
+		UpdateMessageText ();
 	}
 	
 	// Update is called once per frame
@@ -127,6 +132,8 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 				PlayerPrefs.SetInt ("option-input-surface-set", 1);
 
 				optionResult.ApplyTo (canvas);
+
+				StartCoroutine ("Countdown");
 				onDone.Invoke ();
 			}
 			
@@ -143,7 +150,7 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 	private void UpdateMessageText () {
 		if ((messageText != null) &&
-			(messageFormat != null))
+		    (messageFormat != null))
 			messageText.text = string.Format (messageFormat,
 				pointsIndex,
 				points.Length,
@@ -177,6 +184,8 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 
 	public void Confirm () {
+		StopCoroutine ("Countdown");
+
 		optionResult.store_pref ("option-input-surface");
 		SceneManager.LoadScene ("FingerUI2");
 	}
@@ -196,5 +205,23 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 	private static Vector3 GetNormal (Vector3 a, Vector3 b, Vector3 c) {
 		Vector3 result = Vector3.Cross (b - a, c - b);
 		return result.normalized;
+	}
+
+	private IEnumerator Countdown () {
+		for (int i = countdownTime; 0 < i; i--) {
+			messageText.text = string.Format (messageFormatCountdown, i);
+			yield return new WaitForSeconds (1);
+		}
+
+		// If count down timeout.
+		foreach (var image in tapTargets) {
+			image.gameObject.SetActive (false);
+		}
+		pointsIndex = 0;
+		onDoneTimeout.Invoke ();
+
+		tapTargets[0].sprite = tapImage;
+		tapTargets[0].gameObject.SetActive (true);
+		UpdateMessageText ();
 	}
 }
