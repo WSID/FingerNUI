@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 
-public struct OptionInputSurface
+public class OptionInputSurface
 {
 	public static OptionInputSurface optionResult = null;
 
