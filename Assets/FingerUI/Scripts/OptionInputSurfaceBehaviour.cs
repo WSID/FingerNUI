@@ -101,8 +101,9 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 			if (CalculatePlanePosition (out position, out normal)) {
 				Debug.LogFormat ("pos{0}, nor{1}", position, normal);
 
-				OptionBehaviour.optionResults [OptionBehaviour.KEY_OPTION_INPUT_SURFACE]
-				= new OptionInputSurface (position, normal, Vector3.up);
+
+				PlayerPrefs.SetInt ("option-input-surface-set", 1);
+				new OptionInputSurface (position, normal, Vector3.up).store_pref ("option-input-surface");
 
 				Invoke ("ReturnToUI", 1);
 			}
