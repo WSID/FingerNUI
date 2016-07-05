@@ -359,6 +359,7 @@ MonoBehaviour:
   - {fileID: 1919207577}
   tapImage: {fileID: 21300000, guid: f20a9ec0bd52d47519864de8a2294dbc, type: 3}
   tapDoneImage: {fileID: 21300000, guid: 38b559aeb506a45b399e3bc624e18eba, type: 3}
+  tapRejectImage: {fileID: 21300000, guid: 6a03d31c3b6e04e6c923f0c0d2231fb6, type: 3}
 --- !u!114 &982099341 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 11400000, guid: c9f2277f2b4414ff9abf05e783890171,

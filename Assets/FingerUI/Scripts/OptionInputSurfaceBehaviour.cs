@@ -27,6 +27,7 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 	public Sprite tapImage;
 	public Sprite tapDoneImage;
+	public Sprite tapRejectImage;
 
 	private Vector3[] points;
 	private int pointsIndex = 0;
@@ -99,7 +100,7 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		// Check for point.
 		for (int i = 0; i < pointsIndex; i++) {
 			if (Vector3.Distance (points [i], point) < minPointDistance) {
-				Debug.LogWarning ("Too close point!");
+				tapTargets [pointsIndex].sprite = tapRejectImage;
 				return;
 			}
 		}
