@@ -136,8 +136,13 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		position = GetAverage (points);
 
 		// normal.
-		normal = Vector3.forward;
-
+		Vector3[] normals = new Vector3 [4];
+		normals [0] = GetNormal (points [0], points [1], points [3]);
+		normals [1] = GetNormal (points [1], points [3], points [2]);
+		normals [2] = GetNormal (points [3], points [2], points [0]);
+		normals [3] = GetNormal (points [2], points [0], points [1]);
+		normal = - GetAverage (normals);
+		normal.Normalize ();
 		return true;
 	}
 
@@ -151,6 +156,11 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 		result /= vectors.Length;
 		return result;
+	}
+
+	private static Vector3 GetNormal (Vector3 a, Vector3 b, Vector3 c) {
+		Vector3 result = Vector3.Cross (b - a, c - b);
+		return result.normalized;
 	}
 
 
