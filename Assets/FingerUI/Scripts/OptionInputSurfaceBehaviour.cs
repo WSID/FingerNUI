@@ -162,7 +162,7 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		normal = - GetAverage (normals);
 		normal.Normalize ();
 
-		up = points [1] + points[2] - points [0] - points [3];
+		up = points [0] + points[1] - points [2] - points [3];
 		up.Normalize ();
 
 		return new OptionInputSurface (position, normal, up);
