@@ -163,12 +163,10 @@ public class TipTrackBehaviour : MonoBehaviour {
 
 
 	// Game Objects
-	private Dictionary<HandModel, DataHand>	tracked_hands;
+	private Dictionary<HandModel, DataHand>	tracked_hands = new Dictionary <HandModel, DataHand> ();
 
 	// Use this for initialization
 	void Start () {
-		tracked_hands = new Dictionary<HandModel, DataHand> ();
-
 		if (pinchCursorPrefab == null)
 			pinchCursorPrefab = cursorPrefab;
 
