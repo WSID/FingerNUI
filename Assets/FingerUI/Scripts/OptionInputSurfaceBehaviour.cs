@@ -82,8 +82,10 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 
 	private void AddPoint (Vector3 point) {
-		if (pointsIndex == points.Length)
+		if (pointsIndex == points.Length) {
 			Debug.LogWarning ("Adding extra points!");
+			return;
+		}
 
 		points [pointsIndex] = point;
 
