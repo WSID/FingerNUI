@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using Leap;
+
 
 public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
@@ -11,7 +13,17 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 	public HandController handController;
 	private Controller controller;
 
-	private List<Vector3> points;
+	public Text messageText;
+	public string messageFormat;
+
+
+	public UnityEngine.UI.Image[] tapTargets;
+
+	public Sprite tapImage;
+	public Sprite tapDoneImage;
+
+	private Vector3[] points;
+	private int pointsIndex = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -34,7 +46,11 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		controller.Config.SetFloat ("Gesture.KeyTap.HistorySeconds", historySeconds);
 		controller.Config.Save ();
 
-		points = new List<Vector3> ();
+		points = new Vector3 [tapTargets.Length];
+
+		//Show first target.
+		tapTargets[0].sprite = tapImage;
+		tapTargets[0].gameObject.SetActive (true);
 	}
 	
 	// Update is called once per frame
@@ -49,40 +65,82 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 			if ((gesture.Type == Gesture.GestureType.TYPE_KEY_TAP) ||
 				 (gesture.Type == Gesture.GestureType.TYPE_SCREEN_TAP)) {
 
+				Transform trans = handController.transform;
+				Pointable finger = gesture.Pointables [0];
+
+
 				Vector3 pt = 
-					handController.transform.TransformPoint (
-						gesture.Pointables [0].TipPosition.ToUnityScaled (false));
+					trans.TransformPoint (finger.TipPosition.ToUnityScaled (false));
 
 				AddPoint (pt);
+				Debug.LogFormat ("ADD: {0}", pt);
 			}
 		}
 	}
 
-	private void AddPoint (Vector3 point) {
-		points.Add (point);
 
-		if (points.Count == 4) {
+
+	private void AddPoint (Vector3 point) {
+		if (pointsIndex == points.Length)
+			Debug.LogWarning ("Adding extra points!");
+
+		points [pointsIndex] = point;
+
+		// Show Done image.
+		tapTargets [pointsIndex].sprite = tapDoneImage;
+
+		pointsIndex++;
+
+		if (pointsIndex == points.Length) {
+			
 			// Done! Calculate Plane Position and go back to the scene!
 			Vector3 position;
-			Vector3 normal;
+			Vector3 normal; 
 
-			CalculatePlanePosition (Vector3.forward, out position, out normal);
+			if (CalculatePlanePosition (out position, out normal)) {
+				Debug.LogFormat ("pos{0}, nor{1}", position, normal);
+			}
 			
 		} else {
-			// Message about left points.
+
+			tapTargets [pointsIndex].sprite = tapImage;
+			tapTargets [pointsIndex].gameObject.SetActive (true);
+			
 		}
+		// Message about left points.
+		UpdateMessageText ();
 	}
 
-	private bool CalculatePlanePosition (Vector3 direction, out Vector3 position, out Vector3 normal) {
-		// position.
-		Vector3 sum = points[0] + points[1] + points[2] + points[3];
 
-		position = sum * 0.25f;
+	private void UpdateMessageText () {
+		if ((messageText != null) &&
+			(messageFormat != null))
+			messageText.text = string.Format (messageFormat,
+				pointsIndex,
+				points.Length,
+				points.Length - pointsIndex);
+	}
 
+
+
+	private bool CalculatePlanePosition (out Vector3 position, out Vector3 normal) {
+		position = GetAverage (points);
 
 		// normal.
 		normal = Vector3.forward;
 
 		return true;
+	}
+
+
+	private static Vector3 GetAverage (Vector3[] vectors) {
+		Vector3 result = new Vector3 ();
+
+		foreach (Vector3 v in vectors) {
+			result += v;
+		}
+
+		result /= vectors.Length;
+		return result;
 	}
 }
