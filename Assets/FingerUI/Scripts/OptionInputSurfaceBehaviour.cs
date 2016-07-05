@@ -99,11 +99,9 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 			// Done! Calculate Plane Position and go back to the scene!
 			Vector3 position;
 			Vector3 normal; 
+			Vector3 up;
 
-			if (CalculatePlanePosition (out position, out normal)) {
-				Debug.LogFormat ("pos{0}, nor{1}", position, normal);
-
-
+			if (CalculatePlanePosition (out position, out normal, out up)) {
 				PlayerPrefs.SetInt ("option-input-surface-set", 1);
 				new OptionInputSurface (position, normal, Vector3.up).store_pref ("option-input-surface");
 
@@ -132,7 +130,7 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 
 
-	private bool CalculatePlanePosition (out Vector3 position, out Vector3 normal) {
+	private bool CalculatePlanePosition (out Vector3 position, out Vector3 normal, out Vector3 up) {
 		position = GetAverage (points);
 
 		// normal.
@@ -143,6 +141,10 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		normals [3] = GetNormal (points [2], points [0], points [1]);
 		normal = - GetAverage (normals);
 		normal.Normalize ();
+
+		up = points [1] + points[2] - points [0] - points [3];
+		up.Normalize ();
+
 		return true;
 	}
 
