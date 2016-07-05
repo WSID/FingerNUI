@@ -18,7 +18,6 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 	public float minPointDistance = 1.0f;
 
 	public HandController handController;
-	private Controller controller;
 
 	public Text messageText;
 	public string messageFormat;
@@ -43,7 +42,7 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		}
 
 
-		controller = handController.GetLeapController ();
+		Controller controller = handController.GetLeapController ();
 		controller.EnableGesture (Gesture.GestureType.TYPE_KEY_TAP);
 		controller.EnableGesture (Gesture.GestureType.TYPE_CIRCLE);
 		controller.EnableGesture (Gesture.GestureType.TYPE_SCREEN_TAP);
