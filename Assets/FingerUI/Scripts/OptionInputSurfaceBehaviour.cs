@@ -97,6 +97,14 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 			return;
 		}
 
+		// Check for point.
+		for (int i = 0; i < pointsIndex; i++) {
+			if (Vector3.Distance (points [i], point) < minPointDistance) {
+				Debug.LogWarning ("Too close point!");
+				return;
+			}
+		}
+
 		points [pointsIndex] = point;
 
 		// Show Done image.
