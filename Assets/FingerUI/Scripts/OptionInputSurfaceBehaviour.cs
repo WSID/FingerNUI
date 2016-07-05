@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
@@ -99,6 +100,11 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 			if (CalculatePlanePosition (out position, out normal)) {
 				Debug.LogFormat ("pos{0}, nor{1}", position, normal);
+
+				OptionBehaviour.optionResults [OptionBehaviour.KEY_OPTION_INPUT_SURFACE]
+				= new OptionInputSurface (position, normal, Vector3.up);
+
+				Invoke ("ReturnToUI", 1);
 			}
 			
 		} else {
@@ -142,5 +148,10 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 		result /= vectors.Length;
 		return result;
+	}
+
+
+	void ReturnToUI () {
+		SceneManager.LoadScene ("FingerUI2");
 	}
 }
