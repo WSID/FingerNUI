@@ -26,6 +26,5 @@ public class OptionBehaviour : MonoBehaviour {
 		optionResults.Remove (KEY_OPTION_INPUT_SURFACE);
 
 		SceneManager.LoadScene ("OptionInputSurface");
-		//SceneManager.SetActiveScene (SceneManager.GetSceneByPath ("Assets/FingerUI/OptionInputSurface.unity"));
 	}
 }
