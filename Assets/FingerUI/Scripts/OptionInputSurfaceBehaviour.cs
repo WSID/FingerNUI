@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
@@ -29,8 +30,15 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 	public Sprite tapDoneImage;
 	public Sprite tapRejectImage;
 
+	public GameObject canvas;
+
+	public UnityEvent onDone;
+
+
 	private Vector3[] points;
 	private int pointsIndex = 0;
+
+	private OptionInputSurface optionResult = null;
 
 	// Use this for initialization
 	void Start () {
@@ -84,7 +92,6 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 					trans.TransformPoint (finger.TipPosition.ToUnityScaled (false));
 
 				AddPoint (pt);
-				Debug.LogFormat ("ADD: {0}", pt);
 			}
 		}
 	}
@@ -93,7 +100,6 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 	private void AddPoint (Vector3 point) {
 		if (pointsIndex == points.Length) {
-			Debug.LogWarning ("Adding extra points!");
 			return;
 		}
 
@@ -115,13 +121,13 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		if (pointsIndex == points.Length) {
 			
 			// Done! Calculate Plane Position and go back to the scene!
-			OptionInputSurface optionInputSurface = CalculatePlanePosition ();
+			optionResult = CalculatePlanePosition ();
 
-			if (optionInputSurface != null) {
+			if (optionResult != null) {
 				PlayerPrefs.SetInt ("option-input-surface-set", 1);
-				optionInputSurface.store_pref ("option-input-surface");
 
-				Invoke ("ReturnToUI", 1);
+				optionResult.ApplyTo (canvas);
+				onDone.Invoke ();
 			}
 			
 		} else {
@@ -169,6 +175,13 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 	}
 
 
+
+	public void Confirm () {
+		optionResult.store_pref ("option-input-surface");
+		SceneManager.LoadScene ("FingerUI2");
+	}
+
+
 	private static Vector3 GetAverage (Vector3[] vectors) {
 		Vector3 result = new Vector3 ();
 
@@ -183,10 +196,5 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 	private static Vector3 GetNormal (Vector3 a, Vector3 b, Vector3 c) {
 		Vector3 result = Vector3.Cross (b - a, c - b);
 		return result.normalized;
-	}
-
-
-	void ReturnToUI () {
-		SceneManager.LoadScene ("FingerUI2");
 	}
 }
