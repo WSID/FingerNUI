@@ -162,21 +162,15 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		}
 
 		// Check for point.
-		for (int i = 0; i < pointsIndex; i++) {
-			if (Vector3.Distance (points [i], point) < minPointDistance) {
-				tapTargets [pointsIndex].sprite = tapRejectImage;
-				return;
-			}
+		if (!CheckPoint (point)) {
+			tapTargets [pointsIndex].sprite = tapRejectImage;
+			return;
 		}
 
 		points [pointsIndex] = point;
 
 		// Show Done image.
-		tapTargets [pointsIndex].sprite = tapDoneImage;
-
-		pointsIndex++;
-
-		if (pointsIndex == points.Length) {
+		if (!ShowNext ()) {
 			
 			// Done! Calculate Plane Position and go back to the scene!
 			optionResult = CalculatePlanePosition ();
@@ -189,15 +183,53 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 				StartCoroutine ("Countdown");
 				onDone.Invoke ();
 			}
-			
-		} else {
+		}
+
+		// Message about left points.
+		UpdateMessageText ();
+	}
+
+	/// <summary>
+	/// Checks the point.
+	/// </summary>
+	/// The point will be checked by,
+	/// 
+	/// - Distances between previous points.
+	/// 
+	/// <returns>Whether the point would be accepted.</returns>
+	/// <param name="point">Point to check</param>
+	private bool CheckPoint (Vector3 point) {
+		for (int i = 0; i < pointsIndex; i++) {
+			if (Vector3.Distance (points [i], point) < minPointDistance) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+
+	/// <summary>
+	/// Shows the next tap image
+	/// </summary>
+	/// Mark the current tap target as done, and show next target.
+	/// <returns>Whether this has next target.</returns>
+	private bool ShowNext () {
+		// Set current target as done.
+		tapTargets [pointsIndex].sprite = tapDoneImage;
+		pointsIndex++;
+
+		// Move to next target.
+		if (pointsIndex <= points.Length) {
 
 			tapTargets [pointsIndex].sprite = tapImage;
 			tapTargets [pointsIndex].gameObject.SetActive (true);
-			
+
+			return true;
 		}
-		// Message about left points.
-		UpdateMessageText ();
+		else {
+			return false;
+		}
+
 	}
 
 
