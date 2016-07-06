@@ -6,37 +6,90 @@ using System.Collections;
 using System.Collections.Generic;
 using Leap;
 
-
+/// <summary>
+/// Main component for OptionInputSurface.unity
+/// </summary>
 public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
+	#region TapSetting
 	public float minDownVelocity = 50;
 	public float minForwardVelocity = 50;
 
 	public float historySeconds = 0.1f;
+
 	public float minDownDistance = 3.0f;
 	public float minForwardDistance = 5.0f;
+	#endregion
 
+
+	/// <summary>
+	/// The minimum point distance.
+	/// </summary>
+	/// When points are too close, it is likely to have wrong direction.
 	public float minPointDistance = 1.0f;
 
+	/// <summary>
+	/// The countdown time.
+	/// </summary>
+	/// Countdown time for user confirmation.
 	public int countdownTime = 15;
 
 	public HandController handController;
 
+
+	#region Messages
 	public Text messageText;
+
+	/// <summary>
+	/// The message format.
+	/// </summary>
+	/// 0: int: number of done points.
+	/// 1: int: number of all points.
+	/// 2: int: number of left points.
 	public string messageFormat;
+
+	/// <summary>
+	/// The message format for counting down confirmation.
+	/// </summary>
+	/// 0: left seconds.
 	public string messageFormatCountdown;
+	#endregion
 
 
+	#region TapImages
+	/// <summary>
+	/// Image to show.
+	/// </summary>
+	/// The image will be shown one by one.
 	public UnityEngine.UI.Image[] tapTargets;
 
 	public Sprite tapImage;
 	public Sprite tapDoneImage;
 	public Sprite tapRejectImage;
+	#endregion
 
+	/// <summary>
+	/// The canvas.
+	/// </summary>
+	/// The canvas to adjust view position.
+	/// When tapping is done, canvas transformation will be set,
+	/// so that user can check new input surface.
 	public GameObject canvas;
 
+	/// <summary>
+	/// On Done Event
+	/// </summary>
+	/// When user tapped all corner, this will be invoked.
 	public UnityEvent onDone;
+
+	/// <summary>
+	/// On Done Timeout Event
+	/// </summary>
+	/// When use didn't pushed confirmation button in time,
+	/// this will be called.
 	public UnityEvent onDoneTimeout;
+
+
 
 
 	private Vector3[] points;
