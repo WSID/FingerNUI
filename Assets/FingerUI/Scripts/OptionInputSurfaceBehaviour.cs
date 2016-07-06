@@ -79,6 +79,19 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 	public HandController handController;
 
+	#region Title
+	public Text titleText;
+
+	[TextArea]
+	public string title;
+
+	[TextArea]
+	public string titleDone;
+
+	[TextArea]
+	public string titleFail;
+	#endregion
+
 
 	#region Messages
 	public Text messageText;
@@ -391,6 +404,8 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		// Cosine is decreasing function in [0, PI]
 		return (Vector3.Dot (a.normalized, b.normalized) > angleCos);
 	}
+
+
 
 	private IEnumerator Countdown () {
 		for (int i = countdownTime; 0 < i; i--) {
