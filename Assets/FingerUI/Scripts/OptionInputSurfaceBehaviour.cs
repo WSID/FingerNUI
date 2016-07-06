@@ -10,7 +10,8 @@ using Leap;
 
 public class OptionInputSurfaceException : InvalidOperationException {
 	public enum EType {
-		NORMAL
+		NORMAL,
+		UP
 	}
 
 	public EType etype;
@@ -55,6 +56,18 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 	/// Unit is DEGREE. (0 - 90)
 	public float maxNormalAngle = 10;
 
+	/// <summary>
+	/// Maximum between up vector angle.
+	/// </summary>
+	/// 
+	/// Maximum tolerance of angle of vertical and horizontal line.
+	/// 
+	/// horizontal line doesn't used as it is, but cross of normal will be used.
+	/// 
+	/// This parameter defines tolerance for shearing of points.
+	/// 
+	/// Unit is DEGREE. (0 - 90)
+	public float maxUpAngle = 10;
 	#endregion
 
 
@@ -292,6 +305,7 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		Vector3 leftUp;
 
 		float maxNormalAngleCos = Mathf.Cos (Mathf.Deg2Rad * maxNormalAngle);
+		float maxUpAngleCos = Mathf.Cos (Mathf.Deg2Rad * maxUpAngle);
 
 		position = GetAverage (points);
 
@@ -310,8 +324,11 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 				OptionInputSurfaceException.EType.NORMAL);
 		}
 
+		// Set normal.
 		normal = - GetAverage (normals);
 		normal.Normalize ();
+
+
 
 		// Up.
 		up = points [0] + points[1] - points [2] - points [3];
@@ -320,6 +337,12 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		left = points [1] + points [3] - points [0] - points [2];
 		leftUp = Vector3.Cross (normal, left);
 		leftUp.Normalize ();
+
+		// Check Up.
+		if (Vector3.Dot (up, leftUp) < maxUpAngleCos) {
+			throw new OptionInputSurfaceException (
+				OptionInputSurfaceException.EType.UP);
+		}
 
 		up += leftUp;
 		up.Normalize (); // Get mixed direction of up and leftUp
