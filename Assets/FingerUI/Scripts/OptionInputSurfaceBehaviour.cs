@@ -217,7 +217,7 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		pointsIndex++;
 
 		// Move to next target.
-		if (pointsIndex <= points.Length) {
+		if (pointsIndex < points.Length) {
 
 			tapTargets [pointsIndex].sprite = tapImage;
 			tapTargets [pointsIndex].gameObject.SetActive (true);
