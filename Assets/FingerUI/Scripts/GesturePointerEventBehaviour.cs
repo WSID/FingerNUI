@@ -20,10 +20,12 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 		public Stroke stroke;
 		public LineRenderer renderer;
 		public bool discardZ;
+		public float minPointDistance;
 
-		public StrokeVisual (Transform parent, LineRenderer template, bool discardZ) {
+		public StrokeVisual (Transform parent, LineRenderer template, bool discardZ, float minPointDistance) {
 			this.parent = parent;
 			this.discardZ = discardZ;
+			this.minPointDistance = minPointDistance;
 
 			renderer = Instantiate (template) as LineRenderer;
 			stroke = new Stroke ();
@@ -40,6 +42,11 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 
 			if ((1 <= count) && (stroke [count - 1] == point))
 				return;
+
+			if (1 <= count) {
+				if (Vector3.Distance (stroke [count - 1], npoint) < minPointDistance)
+					return;
+			}
 
 			stroke.Add (point);
 
@@ -69,6 +76,8 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 	public UnityEvent onPinchBegin;
 	public UnityEvent onPinchEnd;
 	public StrokeEvent onPinch;
+
+	public float minPointDistance = 4;
 
 
 	// Inner states
@@ -114,7 +123,7 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 			Clean ();
 			state = State.PINCH;
 
-			StrokeVisual svisual = new StrokeVisual (transform, pinchRendererTemplate, false);
+			StrokeVisual svisual = new StrokeVisual (transform, pinchRendererTemplate, false, minPointDistance);
 			fingerStrokes [pointer] = svisual;
 			strokes.Add (svisual);
 
@@ -127,7 +136,7 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 			}
 			state = State.GESTURE;
 
-			StrokeVisual svisual = new StrokeVisual (transform, strokeRendererTemplate, true);
+			StrokeVisual svisual = new StrokeVisual (transform, strokeRendererTemplate, true, minPointDistance);
 			fingerStrokes [pointer] = svisual;
 			strokes.Add (svisual);
 
