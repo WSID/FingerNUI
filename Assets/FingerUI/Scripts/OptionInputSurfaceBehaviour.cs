@@ -275,6 +275,13 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 				points.Length - pointsIndex);
 	}
 
+	private void UpdateMessageTextCountdown (int seconds) {
+		if ((messageText != null) &&
+		    (messageFormat != null))
+			messageText.text = string.Format (messageFormatCountdown,
+				seconds);
+	}
+
 
 
 	private OptionInputSurface CalculatePlanePosition () {
@@ -350,7 +357,7 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 	private IEnumerator Countdown () {
 		for (int i = countdownTime; 0 < i; i--) {
-			messageText.text = string.Format (messageFormatCountdown, i);
+			UpdateMessageTextCountdown (i);
 			yield return new WaitForSeconds (1);
 		}
 
