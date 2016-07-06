@@ -562,6 +562,8 @@ MonoBehaviour:
   minDownDistance: 3
   minForwardDistance: 5
   minPointDistance: 1.5
+  maxNormalAngle: 30
+  countdownTime: 15
   handController: {fileID: 982099341}
   messageText: {fileID: 1787022274}
   messageFormat: "{1}\uAC1C\uC911 {2}\uAC1C \uB0A8\uC74C."
