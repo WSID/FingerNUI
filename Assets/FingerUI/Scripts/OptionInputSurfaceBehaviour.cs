@@ -246,6 +246,8 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		Vector3 position;
 		Vector3 normal; 
 		Vector3 up;
+		Vector3 left;
+		Vector3 leftUp;
 
 		position = GetAverage (points);
 
@@ -258,8 +260,16 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		normal = - GetAverage (normals);
 		normal.Normalize ();
 
+		// Up.
 		up = points [0] + points[1] - points [2] - points [3];
 		up.Normalize ();
+
+		left = points [1] + points [3] - points [0] - points [2];
+		leftUp = Vector3.Cross (normal, left);
+		leftUp.Normalize ();
+
+		up += leftUp;
+		up.Normalize (); // Get mixed direction of up and leftUp
 
 		return new OptionInputSurface (position, normal, up);
 	}
