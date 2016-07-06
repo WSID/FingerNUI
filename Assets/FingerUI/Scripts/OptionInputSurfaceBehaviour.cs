@@ -89,12 +89,14 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 	/// 0: int: number of done points.
 	/// 1: int: number of all points.
 	/// 2: int: number of left points.
+	[TextArea]
 	public string messageFormat;
 
 	/// <summary>
 	/// The message format for counting down confirmation.
 	/// </summary>
 	/// 0: left seconds.
+	[TextArea]
 	public string messageFormatCountdown;
 	#endregion
 
