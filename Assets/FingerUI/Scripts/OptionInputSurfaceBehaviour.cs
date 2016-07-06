@@ -215,23 +215,7 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		points [pointsIndex] = point;
 
 		// Show Done image.
-		if (!ShowNext ()) {
-			
-			// Done! Calculate Plane Position and go back to the scene!
-			try {
-				optionResult = CalculatePlanePosition ();
-
-				if (optionResult != null) {
-					optionResult.ApplyTo (canvas);
-
-					StartCoroutine ("Countdown");
-					onDone.Invoke ();
-				}
-			}
-			catch (OptionInputSurfaceException e) {
-				Debug.LogWarning ("Points not met the condition. Redo is required.");
-			}
-		}
+		if (!ShowNext ()) Done ();
 
 		// Message about left points.
 		UpdateMessageText ();
@@ -353,6 +337,26 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 	}
 
 
+	public void Done () {
+		try {
+			optionResult = CalculatePlanePosition ();
+
+			if (optionResult != null) {
+				optionResult.ApplyTo (canvas);
+
+				StartCoroutine ("Countdown");
+				onDone.Invoke ();
+			}
+		}
+		catch (OptionInputSurfaceException e) {
+			Fail ();
+		}
+	}
+
+
+	public void Fail () {
+		Debug.Log ("Failed to set. Redo is required.");
+	}
 
 
 	public void Confirm () {
