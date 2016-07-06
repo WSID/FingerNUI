@@ -295,11 +295,6 @@ public class HangulComposeBehaviour : MonoBehaviour {
 	public char letter { get; private set; }
 
 
-	/// <summary>
-	/// Time to emit current character.
-	/// </summary>
-	/// If this is set, this will emit the letter after this time.
-	public float forceEmitTime = 0;
 
 
 
@@ -310,7 +305,7 @@ public class HangulComposeBehaviour : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
+		
 	}
 
 
@@ -441,13 +436,6 @@ public class HangulComposeBehaviour : MonoBehaviour {
 
 		onUpdate.Invoke (letter);
 		onUpdateString.Invoke (letter.ToString ());
-
-		if (0 < forceEmitTime) {
-			CancelInvoke ("Emit");
-
-			if (letter != '\0')
-				Invoke ("Emit", forceEmitTime);
-		}
 	}
 
 	public void Emit () {
