@@ -176,8 +176,6 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 			optionResult = CalculatePlanePosition ();
 
 			if (optionResult != null) {
-				PlayerPrefs.SetInt ("option-input-surface-set", 1);
-
 				optionResult.ApplyTo (canvas);
 
 				StartCoroutine ("Countdown");
@@ -270,6 +268,8 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 	public void Confirm () {
 		StopCoroutine ("Countdown");
+
+		PlayerPrefs.SetInt ("option-input-surface-set", 1);
 
 		optionResult.store_pref ("option-input-surface");
 		SceneManager.LoadScene ("FingerUI2");
