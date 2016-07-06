@@ -2,9 +2,23 @@
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Leap;
+
+
+public class OptionInputSurfaceException : InvalidOperationException {
+	public enum EType {
+		NORMAL
+	}
+
+	public EType etype;
+
+	public OptionInputSurfaceException (EType etype) {
+		this.etype = etype;
+	}
+}
 
 /// <summary>
 /// Main component for OptionInputSurface.unity
@@ -22,11 +36,27 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 	#endregion
 
 
+	#region Tolerance
 	/// <summary>
 	/// The minimum point distance.
 	/// </summary>
 	/// When points are too close, it is likely to have wrong direction.
 	public float minPointDistance = 1.0f;
+
+	/// <summary>
+	/// Maximum difference between normal angles, in degree.
+	/// </summary>
+	/// As we are getting more than 3 points, triangles may have different
+	/// normal direction.
+	/// 
+	/// This parameter defines tolerance for skewness of points, to accept
+	/// or reject points.
+	/// 
+	/// Unit is DEGREE. (0 - 90)
+	public float maxNormalAngle = 10;
+
+	#endregion
+
 
 	/// <summary>
 	/// The countdown time.
@@ -173,13 +203,18 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		if (!ShowNext ()) {
 			
 			// Done! Calculate Plane Position and go back to the scene!
-			optionResult = CalculatePlanePosition ();
+			try {
+				optionResult = CalculatePlanePosition ();
 
-			if (optionResult != null) {
-				optionResult.ApplyTo (canvas);
+				if (optionResult != null) {
+					optionResult.ApplyTo (canvas);
 
-				StartCoroutine ("Countdown");
-				onDone.Invoke ();
+					StartCoroutine ("Countdown");
+					onDone.Invoke ();
+				}
+			}
+			catch (OptionInputSurfaceException e) {
+				Debug.LogWarning ("Points not met the condition. Redo is required.");
 			}
 		}
 
@@ -249,6 +284,8 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		Vector3 left;
 		Vector3 leftUp;
 
+		float maxNormalAngleCos = Mathf.Cos (Mathf.Deg2Rad * maxNormalAngle);
+
 		position = GetAverage (points);
 
 		// normal.
@@ -257,6 +294,15 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		normals [1] = GetNormal (points [1], points [3], points [2]);
 		normals [2] = GetNormal (points [3], points [2], points [0]);
 		normals [3] = GetNormal (points [2], points [0], points [1]);
+
+		// Check normal.
+		// Cos is decreasing in [0, 90]
+		if ((Vector3.Dot (normals [0], normals [2]) < maxNormalAngleCos) ||
+		    (Vector3.Dot (normals [1], normals [3]) < maxNormalAngleCos)) {
+			throw new OptionInputSurfaceException (
+				OptionInputSurfaceException.EType.NORMAL);
+		}
+
 		normal = - GetAverage (normals);
 		normal.Normalize ();
 
