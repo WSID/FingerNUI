@@ -111,6 +111,15 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 	/// 0: left seconds.
 	[TextArea]
 	public string messageFormatCountdown;
+
+	[TextArea]
+	public string messageFailNormal;
+
+	[TextArea]
+	public string messageFailUp;
+
+
+	public string messageRejectClosePoint;
 	#endregion
 
 
@@ -183,9 +192,8 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		points = new Vector3 [tapTargets.Length];
 
 		//Show first target.
-		tapTargets[0].sprite = tapImage;
-		tapTargets[0].gameObject.SetActive (true);
-		UpdateMessageText ();
+		pointsIndex = 0;
+		Begin ();
 	}
 	
 	// Update is called once per frame
@@ -222,6 +230,7 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		// Check for point.
 		if (!CheckPoint (point)) {
 			tapTargets [pointsIndex].sprite = tapRejectImage;
+			UpdateMessageText (messageRejectClosePoint);
 			return;
 		}
 
@@ -229,9 +238,7 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 		// Show Done image.
 		if (!ShowNext ()) Done ();
-
-		// Message about left points.
-		UpdateMessageText ();
+		else UpdateMessageText ();
 	}
 
 	/// <summary>
@@ -278,13 +285,14 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 	}
 
 
-	private void UpdateMessageText () {
+	private void UpdateMessageText (string append = "") {
 		if ((messageText != null) &&
 		    (messageFormat != null))
 			messageText.text = string.Format (messageFormat,
 				pointsIndex,
 				points.Length,
-				points.Length - pointsIndex);
+				points.Length - pointsIndex,
+				append);
 	}
 
 	private void UpdateMessageTextCountdown (int seconds) {
@@ -349,6 +357,17 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		return new OptionInputSurface (position, normal, up);
 	}
 
+	public void Begin () {
+		if (pointsIndex == 0) {
+			tapTargets [0].sprite = tapImage;
+			tapTargets [0].gameObject.SetActive (true);
+			UpdateMessageText ();
+
+			if (titleText != null)
+				titleText.text = title;
+		}
+	}
+
 
 	public void Done () {
 		try {
@@ -357,18 +376,39 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 			if (optionResult != null) {
 				optionResult.ApplyTo (canvas);
 
+				if (titleText != null) titleText.text = titleDone;
+
 				StartCoroutine ("Countdown");
 				onDone.Invoke ();
 			}
 		}
 		catch (OptionInputSurfaceException e) {
-			Fail ();
+			Fail (e);
 		}
 	}
 
 
-	public void Fail () {
-		Debug.Log ("Failed to set. Redo is required.");
+	public void Fail (OptionInputSurfaceException e) {
+
+		foreach (var target in tapTargets) {
+			target.sprite = tapRejectImage;
+		}
+
+		if (titleText != null)
+			titleText.text = titleFail;
+
+		if (messageText != null) {
+			if (e.etype == OptionInputSurfaceException.EType.NORMAL) {
+				messageText.text = messageFailNormal;
+			}
+			else if (e.etype == OptionInputSurfaceException.EType.UP) {
+				messageText.text = messageFailUp;
+			}
+		}
+		
+		pointsIndex = 0;
+
+		Invoke ("Begin", 5.0f);
 	}
 
 
