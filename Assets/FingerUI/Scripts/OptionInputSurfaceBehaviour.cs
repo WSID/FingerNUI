@@ -304,8 +304,8 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		Vector3 left;
 		Vector3 leftUp;
 
-		float maxNormalAngleCos = Mathf.Cos (Mathf.Deg2Rad * maxNormalAngle);
-		float maxUpAngleCos = Mathf.Cos (Mathf.Deg2Rad * maxUpAngle);
+		float maxNormalAngleRad = Mathf.Deg2Rad * maxNormalAngle;
+		float maxUpAngleRad = Mathf.Deg2Rad * maxUpAngle;
 
 		position = GetAverage (points);
 
@@ -318,8 +318,8 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 		// Check normal.
 		// Cos is decreasing in [0, 90]
-		if ((Vector3.Dot (normals [0], normals [2]) < maxNormalAngleCos) ||
-		    (Vector3.Dot (normals [1], normals [3]) < maxNormalAngleCos)) {
+		if ((! CheckAngleLess (normals [0], normals [2], maxNormalAngleRad)) ||
+			(! CheckAngleLess (normals [1] , normals [3], maxNormalAngleRad))) {
 			throw new OptionInputSurfaceException (
 				OptionInputSurfaceException.EType.NORMAL);
 		}
@@ -339,7 +339,7 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		leftUp.Normalize ();
 
 		// Check Up.
-		if (Vector3.Dot (up, leftUp) < maxUpAngleCos) {
+		if (! CheckAngleLess (up, leftUp, maxUpAngleRad)) {
 			throw new OptionInputSurfaceException (
 				OptionInputSurfaceException.EType.UP);
 		}
@@ -349,6 +349,7 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 		return new OptionInputSurface (position, normal, up);
 	}
+
 
 
 
@@ -376,6 +377,13 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 	private static Vector3 GetNormal (Vector3 a, Vector3 b, Vector3 c) {
 		Vector3 result = Vector3.Cross (b - a, c - b);
 		return result.normalized;
+	}
+
+	private bool CheckAngleLess (Vector3 a, Vector3 b, float angle) {
+		float angleCos = Mathf.Cos (angle);
+
+		// Cosine is decreasing function in [0, PI]
+		return (Vector3.Dot (a.normalized, b.normalized) > angleCos);
 	}
 
 	private IEnumerator Countdown () {
