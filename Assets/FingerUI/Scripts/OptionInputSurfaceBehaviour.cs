@@ -218,7 +218,10 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 				 (gesture.Type == Gesture.GestureType.TYPE_SCREEN_TAP)) {
 
 				Transform trans = handController.transform;
-				Pointable finger = gesture.Pointables [0];
+				Leap.Finger finger = new Leap.Finger (gesture.Pointables [0]);
+
+				if (finger.Type != Finger.FingerType.TYPE_INDEX)
+					continue;
 				
 				int id = finger.Id;
 				float time = -1.0f;
