@@ -11,7 +11,8 @@ using Leap;
 public class OptionInputSurfaceException : InvalidOperationException {
 	public enum EType {
 		NORMAL,
-		UP
+		UP,
+		RATIO
 	}
 
 	public EType etype;
@@ -68,6 +69,8 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 	/// 
 	/// Unit is DEGREE. (0 - 90)
 	public float maxUpAngle = 10;
+
+	public float maxDiffScale = 1.1f;
 	#endregion
 
 
@@ -117,6 +120,9 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 	[TextArea]
 	public string messageFailUp;
+
+	[TextArea]
+	public string messageFailRatio;
 
 
 	public string messageRejectClosePoint;
@@ -316,12 +322,15 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		Vector3 heightVector;
 		Vector2 size;
 		Vector2 canvasSize;
-		float scale;
+		Vector2 scale;
+		float scaleAverage;
+		float scaleDiff;
 
 
 
 		float maxNormalAngleRad = Mathf.Deg2Rad * maxNormalAngle;
 		float maxUpAngleRad = Mathf.Deg2Rad * maxUpAngle;
+		float invMaxDiffScale = 1 / maxDiffScale;
 
 		position = GetAverage (points);
 
@@ -376,9 +385,22 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 		canvasSize = ((RectTransform)canvas.transform).rect.size;
 
-		scale = Mathf.Sqrt (size.x * size.y / canvasSize.x / canvasSize.y);
+		scale = new Vector2 (
+			size.x / canvasSize.x,
+			size.y / canvasSize.y);
+		
 
-		return new OptionInputSurface (position, normal, up, new Vector2 (scale, scale));
+		scaleAverage = Mathf.Sqrt (scale.x * scale.y);
+
+		// Check Scale.
+		scaleDiff = size.x / size.y;
+
+		if ((scaleDiff < invMaxDiffScale) || (maxDiffScale < scaleDiff))
+			throw new OptionInputSurfaceException (
+				OptionInputSurfaceException.EType.RATIO);
+
+
+		return new OptionInputSurface (position, normal, up, new Vector2 (scaleAverage, scaleAverage));
 	}
 
 	public void Begin () {
@@ -424,9 +446,10 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		if (messageText != null) {
 			if (e.etype == OptionInputSurfaceException.EType.NORMAL) {
 				messageText.text = messageFailNormal;
-			}
-			else if (e.etype == OptionInputSurfaceException.EType.UP) {
+			} else if (e.etype == OptionInputSurfaceException.EType.UP) {
 				messageText.text = messageFailUp;
+			} else if (e.etype == OptionInputSurfaceException.EType.RATIO) {
+				messageText.text = messageFailRatio;
 			}
 		}
 		
