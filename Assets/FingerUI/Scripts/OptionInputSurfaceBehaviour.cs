@@ -165,6 +165,8 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 
 
+	private Dictionary<int, float> tapTime;
+
 	private Vector3[] points;
 	private int pointsIndex = 0;
 
@@ -180,6 +182,7 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 			Debug.LogError ("HandController is not found on the scene. This is required.");
 		}
 
+		tapTime = new Dictionary<int, float> ();
 
 		Controller controller = handController.GetLeapController ();
 		controller.EnableGesture (Gesture.GestureType.TYPE_KEY_TAP);
@@ -216,12 +219,22 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 				Transform trans = handController.transform;
 				Pointable finger = gesture.Pointables [0];
+				
+				int id = finger.Id;
+				float time = -1.0f;
 
+				if (tapTime.ContainsKey (id)) {
+					time = tapTime[id];
+				}
 
-				Vector3 pt = 
-					trans.TransformPoint (finger.TipPosition.ToUnityScaled (false));
+				if ( (time + 1.0f) < Time.time ) {
+					Vector3 pt = 
+						trans.TransformPoint (finger.TipPosition.ToUnityScaled (false));
 
-				AddPoint (pt);
+					AddPoint (pt);
+
+					tapTime[id] = Time.time;
+				}
 			}
 		}
 	}
