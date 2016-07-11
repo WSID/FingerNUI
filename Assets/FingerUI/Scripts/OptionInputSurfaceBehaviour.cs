@@ -482,6 +482,15 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 	}
 
 
+	public void RemoveHand (HandModel hand) {
+		foreach (FingerModel finger in hand.fingers) {
+			Leap.Finger leapFinger = finger.GetLeapFinger ();
+
+			tapTime.Remove (leapFinger.Id);
+		}
+	}
+
+
 	private static Vector3 GetAverage (Vector3[] vectors) {
 		Vector3 result = new Vector3 ();
 
