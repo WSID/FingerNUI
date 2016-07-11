@@ -354,7 +354,7 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		up += leftUp;
 		up.Normalize (); // Get mixed direction of up and leftUp
 
-		return new OptionInputSurface (position, normal, up);
+		return new OptionInputSurface (position, normal, up, new Vector2 (0.007, 0.007));
 	}
 
 	public void Begin () {
