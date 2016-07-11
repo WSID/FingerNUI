@@ -306,10 +306,19 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 
 	private OptionInputSurface CalculatePlanePosition () {
 		Vector3 position;
+
 		Vector3 normal; 
 		Vector3 up;
 		Vector3 left;
 		Vector3 leftUp;
+
+		Vector3 widthVector;
+		Vector3 heightVector;
+		Vector2 size;
+		Vector2 canvasSize;
+		float scale;
+
+
 
 		float maxNormalAngleRad = Mathf.Deg2Rad * maxNormalAngle;
 		float maxUpAngleRad = Mathf.Deg2Rad * maxUpAngle;
@@ -354,7 +363,22 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		up += leftUp;
 		up.Normalize (); // Get mixed direction of up and leftUp
 
-		return new OptionInputSurface (position, normal, up, new Vector2 (0.007, 0.007));
+		left = Vector3.Cross (up, normal).normalized;
+
+
+		// Scale.
+		widthVector = points [1] + points [3] - points [0] - points [2];
+		heightVector = points [0] + points [1] - points [2] - points [3];
+
+		size = new Vector2 (
+			Vector3.Dot (widthVector, left),
+			Vector3.Dot (heightVector, up));		
+
+		canvasSize = ((RectTransform)canvas.transform).rect.size;
+
+		scale = Mathf.Sqrt (size.x * size.y / canvasSize.x / canvasSize.y);
+
+		return new OptionInputSurface (position, normal, up, new Vector2 (scale, scale));
 	}
 
 	public void Begin () {
