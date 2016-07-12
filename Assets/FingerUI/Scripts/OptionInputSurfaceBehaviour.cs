@@ -334,16 +334,6 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		Vector3 left;
 		Vector3 leftUp;
 
-		Vector3 widthVector;
-		Vector3 heightVector;
-		Vector2 size;
-		Vector2 canvasSize;
-		Vector2 scale;
-		float scaleAverage;
-		float scaleDiff;
-
-
-
 		float maxNormalAngleRad = Mathf.Deg2Rad * maxNormalAngle;
 		float maxUpAngleRad = Mathf.Deg2Rad * maxUpAngle;
 		float invMaxDiffScale = 1 / maxDiffScale;
@@ -391,30 +381,8 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		left = Vector3.Cross (up, normal).normalized;
 
 
-		// Scale.
-		widthVector = points [1] + points [3] - points [0] - points [2];
-		heightVector = points [0] + points [1] - points [2] - points [3];
-
-		size = new Vector2 (
-			Vector3.Dot (widthVector, left),
-			Vector3.Dot (heightVector, up));		
-
-		canvasSize = ((RectTransform)canvas.transform).rect.size;
-
-		scale = new Vector2 (
-			size.x / canvasSize.x,
-			size.y / canvasSize.y);
-		
-
-		scaleAverage = Mathf.Sqrt (scale.x * scale.y);
-
-		// Check Scale.
-		scaleDiff = size.x / size.y;
-
-		if ((scaleDiff < invMaxDiffScale) || (maxDiffScale < scaleDiff))
-			throw new OptionInputSurfaceException (
-				OptionInputSurfaceException.EType.RATIO);
-
+		// TODO: Check scale and apply scaling.
+		float scaleAverage = 0.007f;
 
 		return new OptionInputSurface (position, normal, up, new Vector2 (scaleAverage, scaleAverage));
 	}
