@@ -1048,6 +1048,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: StrokeEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  minPointDistance: 4
 --- !u!1 &219184991
 GameObject:
   m_ObjectHideFlags: 0
