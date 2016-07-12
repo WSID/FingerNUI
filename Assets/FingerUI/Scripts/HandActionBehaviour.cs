@@ -108,6 +108,12 @@ public class HandActionBehaviour : MonoBehaviour
 		}
 	}
 
+	// Finalize things.
+	void Stop ()
+	{
+		tracked_hands = null;
+	}
+
 	public void addHand (HandModel model) {
 		if (! tracked_hands.ContainsKey (model)) {
 			tracked_hands [model] = new DataHand (this, model);
