@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
@@ -14,7 +14,10 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 		GESTURE,
 		PINCH
 	}
-	
+
+
+	private float timer = 0;
+	public float time_gap = 2.0f;
 	public struct StrokeVisual {
 		public Transform parent;
 		public Stroke stroke;
@@ -87,6 +90,9 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 	private State state = State.CLEAN;
 	private bool gestureUpdated = false;
 
+
+	private bool check;
+
 	// Use this for initialization
 	void Start () {
 		fingerStrokes = new Dictionary<Pointer, StrokeVisual> ();
@@ -108,6 +114,11 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 			onGesture.Invoke (strokeList);
 
 			gestureUpdated = false;
+		}
+		if (Check_Time () && check) {
+			onGestureEnd.Invoke ();
+			gestureUpdated = false;
+			check = false;
 		}
 	}
 
@@ -145,6 +156,8 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 	}
 
 	public override void OnPointerIn (Pointer pointer, Vector3 tipLocalPosition) {
+		check = false;
+
 		bool isThumb = ! (pointer is PointerFinger);
 
 		if (! fingerStrokes.ContainsKey (pointer))
@@ -163,13 +176,16 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 	}
 
 	public override void OnPointerEnd (Pointer pointer) {
+		check = true;
+
 		bool isThumb = ! (pointer is PointerFinger);
 
 		if (isThumb) {
 			onPinchEnd.Invoke ();
 		}
-
+		timer = Time.time;
 		fingerStrokes.Remove (pointer);
+
 	}
 
 
@@ -182,5 +198,13 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 		strokes = new List<StrokeVisual> ();
 
 		state = State.CLEAN;
+	}
+
+	public bool Check_Time(){
+		float current_time = Time.time;
+		if ((timer + time_gap) <= current_time)
+			return true;
+		else
+			return false;
 	}
 }
