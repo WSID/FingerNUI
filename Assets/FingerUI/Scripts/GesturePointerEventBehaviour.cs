@@ -195,7 +195,8 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 			stroke.Destroy ();
 		}
 
-		strokes = new List<StrokeVisual> ();
+		strokes.Clear ();
+		fingerStrokes.Clear ();
 
 		state = State.CLEAN;
 	}
