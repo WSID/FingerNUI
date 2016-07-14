@@ -973,6 +973,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24ac7581eb04b408b816cd4da3a5859b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  time_gap: 2
   strokeRendererTemplate: {fileID: 60264622}
   pinchRendererTemplate: {fileID: 1358057679}
   onGestureBegin:
@@ -6050,7 +6051,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
+        m_CallState: 0
     m_TypeName: StringEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   onEmit:
     m_PersistentCalls:
@@ -6109,7 +6110,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
-  forceEmitTime: 2
 --- !u!114 &1709669118
 MonoBehaviour:
   m_ObjectHideFlags: 0
