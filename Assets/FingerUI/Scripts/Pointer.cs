@@ -8,6 +8,8 @@ using Leap;
 /// </summary>
 public abstract class Pointer : MonoBehaviour{
 
+	private Canvas _canvas;
+
 	/// <summary>
 	/// State of Input
 	/// </summary>
@@ -38,7 +40,6 @@ public abstract class Pointer : MonoBehaviour{
 	/// </summary>
 	private PointerEventBehaviour inputPeb;
 	private State _state;
-	private bool _enabled;
 
 
 	/// <summary>
@@ -67,54 +68,79 @@ public abstract class Pointer : MonoBehaviour{
 	}
 
 	/// <summary>
-	/// Gets or sets the enabled.
+	/// HandModel for this pointer.
 	/// </summary>
-	/// 
-	/// When enabled, pointer can perform input.
-	/// When disabled, it does not.
-	/// 
-	/// <value>Enabled or disabled.</value>
-	public bool enabled {
-		get {
-			return _enabled;
-		}
-		set {
-			_enabled = value;
-
-			if (!value)
-				state = State.OUT;
-		}
-	}
+	/// <value>The hand model</value>
+	[HideInInspector]
+	public virtual HandModel hand { get; set; }
 
 	/// <summary>
 	/// Gets the canvas object.
 	/// </summary>
 	/// <value>The canvas.</value>
-	public Canvas canvas { get; private set; }
+	public Canvas canvas {
+		get {
+			return _canvas;
+		}
+		set {
+			_canvas = value;
+
+			if (_canvas != null) {
+				if (cursorInput != null) {
+					cursorInput.transform.SetParent (value.transform, false);
+				}
+
+				if (cursorReady != null) {
+					cursorReady.transform.SetParent (value.transform, false);
+				}
+			} else {
+				if (cursorInput != null) {
+					cursorInput.transform.SetParent (transform);
+					cursorInput.SetActive (false);
+				}
+
+				if (cursorReady != null) {
+					cursorReady.transform.SetParent (transform);
+					cursorReady.SetActive (false);
+				}
+				
+			}
+		}
+	}
+
+	/// <summary>
+	/// Whether cursors are should be duplicated.
+	/// </summary>
+	/// 
+	/// Sometimes pointer owns cursor. but most of times,
+	/// it would share cursor objects.
+	/// 
+	/// If this is true, this will duplicate cursor for it.
+	public bool duplicateCursor;
 
 	/// <summary>
 	/// Gets the cursor when pointer is in interest.
 	/// </summary>
 	/// <value>The Ready cursor.</value>
-	public GameObject cursorReady { get; private set; }
+	public GameObject cursorReady;
 
 	/// <summary>
 	/// Gets the cursor when pointer is in input.
 	/// </summary>
 	/// <value>The Input Cursor.</value>
-	public GameObject cursorInput { get; private set; }
+	public GameObject cursorInput;
 
 	/// <summary>
 	/// the input strength that updated in UpdatePointer().
 	/// </summary>
 	/// Implementation should set this in UpdatePointer() function.
-	/// 
+	///
 	/// If input depth is less than 0, pointer won't visible.
 	/// If input depth is between 0 ~ 1, pointer will be visible, and let
 	/// user to know where would input will begin.
 	/// 
 	/// If input depth is greater than 1, actual input will take place.
-	/// 
+	///
 	/// <value>The input depth.</value>
 	public float inputStrength { get; protected set; }
 
@@ -122,7 +148,7 @@ public abstract class Pointer : MonoBehaviour{
 	/// World position of pointer that updated in UpdatePointer().
 	/// </summary>
 	/// Implementation should set this in UpdatePointer() function.
-	/// 
+	///
 	/// Setting this does not set position property.
 	/// These two should be setted by individual.
 	/// 
@@ -149,6 +175,30 @@ public abstract class Pointer : MonoBehaviour{
 	/// also updates on every frame.
 	protected abstract void UpdatePointer ();
 
+
+	void Start () {
+		if (duplicateCursor) {
+			if (cursorReady != null) {
+				cursorReady = Instantiate (cursorReady);
+				cursorReady.transform.SetParent (canvas.transform, false);
+			}
+
+			if (cursorInput != null) {
+				cursorInput = Instantiate (cursorInput);
+				cursorInput.transform.SetParent (canvas.transform, false);
+			}
+		}
+	}
+
+	void OnDisable () {
+		state = State.OUT;
+	}
+
+	void OnDestroy () {
+		GameObject.Destroy (this.cursorInput);
+		GameObject.Destroy (this.cursorReady);
+	}
+
 	/// <summary>
 	/// Update pointer information and cursors.
 	/// </summary>
@@ -157,22 +207,20 @@ public abstract class Pointer : MonoBehaviour{
 	/// 
 	/// This is called from TipTrackBehaviour
 	public void Update () {
-		if (enabled) {
-			UpdatePointer ();
+		UpdatePointer ();
 
-			if (inputStrength <= 0)
-				state = State.OUT;
-			else if (inputStrength < 1)
-				state = State.READY;
-			else
-				state = State.INPUT;
+		if (inputStrength <= 0)
+			state = State.OUT;
+		else if (inputStrength < 1)
+			state = State.READY;
+		else
+			state = State.INPUT;
 
 
-			if (state == State.READY)
-				OnReadyIn ();
-			else if (state == State.INPUT)
-				OnInputIn ();
-		}
+		if (state == State.READY)
+			OnReadyIn ();
+		else if (state == State.INPUT)
+			OnInputIn ();
 	}
 
 
@@ -266,41 +314,4 @@ public abstract class Pointer : MonoBehaviour{
 		return trans.rect.Contains (positionCurrent);
 	}
 
-	/// <summary>
-	/// Destroy associated GameObjects with this pointer.
-	/// </summary>
-	/// 
-	/// If implementation introduces additional GameObjects, they should be destroyed
-	/// in this function, too.
-	public virtual void Destroy () {
-		enabled = false;
-		GameObject.Destroy (this.cursorInput);
-		GameObject.Destroy (this.cursorReady);
-	}
-
-
-	public Pointer (Canvas canvas, GameObject cursorReady, GameObject cursorInput) {
-		if (canvas == null)
-			throw new ArgumentNullException (
-				"canvas", 
-				"Pointer needs a canvas.");
-
-		_state = State.OUT;
-		
-		inputPeb = null;
-		this.canvas = canvas;
-		this.enabled = true;
-
-		this.cursorReady = GameObject.Instantiate (cursorReady);
-		this.cursorInput = GameObject.Instantiate (cursorInput);
-
-		this.cursorReady.tag = "cursor";
-		this.cursorInput.tag = "cursor";
-
-		this.cursorReady.SetActive (false);
-		this.cursorInput.SetActive (false);
-
-		this.cursorReady.transform.SetParent (canvas.transform, false);
-		this.cursorInput.transform.SetParent (canvas.transform, false);
-	}
 }

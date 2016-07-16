@@ -15,22 +15,23 @@ using System;
 public class PointerFinger: Pointer {
 
 	/// <summary>
-	/// Finger model.
+	/// The type of the finger.
 	/// </summary>
-	/// <value>The finger model.</value>
-	public FingerModel model { get; private set; }
+	/// 
+	/// This field determines which finger the pointer to be placed on.
+	public Leap.Finger.FingerType fingerType;
 
 	/// <summary>
 	/// Proximity distance to get in interest.
 	/// </summary>
 	///
 	/// this value will be affected by scaling factor of Transform of canvas.
-	///
-	/// <value>The proximity distance.</value>
-	public float proximityDistance { get; set; }
+	public float proximityDistance;
 
 	protected override void UpdatePointer ()
 	{
+		FingerModel model = hand.fingers [(int) fingerType];
+
 		if (model.GetLeapFinger ().IsExtended) {
 			worldPosition = model.GetTipPosition ();
 			position = canvas.transform.InverseTransformPoint (worldPosition);
@@ -39,18 +40,5 @@ public class PointerFinger: Pointer {
 		else {
 			inputStrength = -1;
 		}
-	}
-
-
-
-	public PointerFinger (
-		Canvas canvas,
-		GameObject cursorReady,
-		GameObject cursorInput,
-		FingerModel model,
-		float proximityDistance = 1.0f) : base (canvas, cursorReady, cursorInput)
-	{
-		this.model = model;
-		this.proximityDistance = proximityDistance;
 	}
 }

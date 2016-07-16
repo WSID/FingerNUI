@@ -11,30 +11,15 @@ using System;
 /// Leap Motion offers pinch strength values for each hand.
 /// Pinch will be detected with this value.
 public class PointerPinch: Pointer {
-	private FingerModel thumbModel;
 
-	public HandModel model { get; private set; }
 	public float pinchStrength { get; set; }
 
 
 	protected override void UpdatePointer ()
 	{
+		FingerModel thumbModel = hand.fingers [0];
 		worldPosition = thumbModel.GetTipPosition ();
 		position = canvas.transform.InverseTransformPoint (worldPosition);
-		inputStrength = model.GetLeapHand ().PinchStrength;
-	}
-
-
-	public PointerPinch (
-		Canvas canvas,
-		GameObject cursorReady,
-		GameObject cursorInput,
-		HandModel model,
-		float pinchStrength = 0.95f) : base (canvas, cursorReady, cursorInput)
-	{
-		this.model = model;
-		this.pinchStrength = pinchStrength;
-
-		thumbModel = model.fingers [0];
+		inputStrength = hand.GetLeapHand ().PinchStrength;
 	}
 }
