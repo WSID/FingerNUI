@@ -20,7 +20,8 @@ public class TipTrackBehaviour : MonoBehaviour {
 	{
 		public enum State {
 			UNPINCH,
-			PINCH
+			PINCH,
+			DISABLED
 		}
 
 		private State _state;
@@ -28,7 +29,8 @@ public class TipTrackBehaviour : MonoBehaviour {
 		private TipTrackBehaviour behaviour;
 		private HandModel model;
 
-		private Pointer[] pointers;
+		private Pointer[] pointersFoldHand;
+		private Pointer pointerOpenHand;
 
 		public State state {
 			get {
@@ -62,36 +64,33 @@ public class TipTrackBehaviour : MonoBehaviour {
 
 		public DataHand (TipTrackBehaviour behaviour, HandModel model)
 		{
+			Canvas canvas = FindObjectOfType <Canvas> ();
+
 			this.behaviour = behaviour;
 			this.model = model;
-			this._state = State.UNPINCH;
 
-			FingerModel[] fmodels = model.fingers;
-
-			pointers = new Pointer[3];
-
-			pointers[0] = new PointerOpenHand (
-				behaviour.GetComponent <Canvas> (),
-				behaviour.pinchCursorPrefab,
-				behaviour.pinchCursorPrefabIn,
-				model);
-
-			for (int i = 1; i < 3; i ++ )
-			{
-				pointers[i] = new PointerFinger (
-					behaviour.GetComponent <Canvas> (),
-					behaviour.cursorPrefab,
-					behaviour.cursorPrefabIn,
-					fmodels[i],
-					behaviour.proximityDistance );
+			this.pointersFoldHand = new Pointer[behaviour.pointersFoldHand.Length];
+			for (int i = 0; i < pointersFoldHand.Length; i++) {
+				pointersFoldHand[i] = Instantiate <Pointer> (behaviour.pointersFoldHand[i]);
+				pointersFoldHand[i].canvas = canvas;
+				pointersFoldHand[i].hand = model;
+				pointersFoldHand[i].enabled = behaviour.enabled;
 			}
+
+			this.pointerOpenHand = Instantiate <Pointer> (behaviour.pointerOpenHand);
+			this.pointerOpenHand.canvas = canvas;
+			this.pointerOpenHand.hand = model;
+			this.pointerOpenHand.enabled = behaviour.enabled;
+
+			this.state = State.UNPINCH;
 		}
 
 		public void Destroy () {
-			foreach (Pointer pointer in pointers)
+			foreach (Pointer pointer in pointersFoldHand)
 			{
-				pointer.Destroy ();
+				GameObject.Destroy (pointer.gameObject);
 			}
+			GameObject.Destroy (pointerOpenHand.gameObject);
 		}
 
 
@@ -99,7 +98,6 @@ public class TipTrackBehaviour : MonoBehaviour {
 		}
 
 		public void OnPinchIn () {
-			pointers [0].Update ();
 		}
 
 		public void OnPinchEnd () {
@@ -107,21 +105,24 @@ public class TipTrackBehaviour : MonoBehaviour {
 
 
 		public void OnUnpinchBegin () {
-			for (int i = 1; i < 3; i++) {
-				pointers [i].enabled = true;
+			foreach (Pointer pointer in pointersFoldHand) {
+				pointer.enabled = true;
 			}
 		}
 
 		public void OnUnpinchIn () {
 			for (int i = 0; i < 3; i ++) {
-				pointers [i].Update ();
 			}
 		}
 
 		public void OnUnpinchEnd () {
-			for (int i = 1; i < 3; i++) {
-				pointers [i].enabled = false;
+			foreach (Pointer pointer in pointersFoldHand) {
+				pointer.enabled = false;
 			}
+		}
+
+		public void OnDisabledBegin () {
+			pointerOpenHand.enabled = false;
 		}
 
 
@@ -129,7 +130,7 @@ public class TipTrackBehaviour : MonoBehaviour {
 		public void Update () {
 			bool isPinch;
 
-			isPinch = (pointers[0].inputStrength == 1);
+			isPinch = (pointerOpenHand.inputStrength == 1);
 
 			state = isPinch ? State.PINCH : State.UNPINCH;
 
@@ -160,6 +161,8 @@ public class TipTrackBehaviour : MonoBehaviour {
 	public float proximityDistance = 1;
 	public float pinchStrengthPrepare = 0.5f;
 	public float pinchStrength = 0.9f;
+	public Pointer[] pointersFoldHand;
+	public Pointer   pointerOpenHand;
 
 
 	// Game Objects
@@ -179,6 +182,18 @@ public class TipTrackBehaviour : MonoBehaviour {
 		foreach (var pair in tracked_hands)
 		{
 			pair.Value.Update ();
+		}
+	}
+
+	void OnEnabled () {
+		foreach (var pair in tracked_hands) {
+			pair.Value.state = DataHand.State.UNPINCH;
+		}
+	}
+
+	void OnDisabled () {
+		foreach (var pair in tracked_hands) {
+			pair.Value.state = DataHand.State.DISABLED;
 		}
 	}
 
