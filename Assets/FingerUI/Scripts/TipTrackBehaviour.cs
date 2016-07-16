@@ -145,37 +145,13 @@ public class TipTrackBehaviour : MonoBehaviour {
 			}
 		}
 	}
-		
 
-
-	public GameObject cursorPrefab;
-	public GameObject cursorPrefabIn;
-	public GameObject cursorPrefabAir;
-
-	public GameObject pinchCursorPrefab;
-	public GameObject pinchCursorPrefabIn;
-	public GameObject pinchCursorPrefabAir;
-
-
-
-	public float proximityDistance = 1;
-	public float pinchStrengthPrepare = 0.5f;
-	public float pinchStrength = 0.9f;
 	public Pointer[] pointersFoldHand;
 	public Pointer   pointerOpenHand;
 
 
 	// Game Objects
 	private Dictionary<HandModel, DataHand>	tracked_hands = new Dictionary <HandModel, DataHand> ();
-
-	// Use this for initialization
-	void Start () {
-		if (pinchCursorPrefab == null)
-			pinchCursorPrefab = cursorPrefab;
-
-		if (pinchCursorPrefabIn == null)
-			pinchCursorPrefabIn = cursorPrefabIn;
-	}
 
 	// Update is called once per frame
 	void Update () {
