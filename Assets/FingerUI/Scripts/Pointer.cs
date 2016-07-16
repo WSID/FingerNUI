@@ -206,7 +206,7 @@ public abstract class Pointer : MonoBehaviour{
 	/// This updates pointer information, and updates cursor, performs input with this information.
 	/// 
 	/// This is called from TipTrackBehaviour
-	public void Update () {
+	void Update () {
 		UpdatePointer ();
 
 		if (inputStrength <= 0)
