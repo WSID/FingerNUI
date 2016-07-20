@@ -12,6 +12,7 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 	public enum State {
 		CLEAN,
 		GESTURE,
+		GESTURE_DONE,
 		PINCH
 	}
 
@@ -116,7 +117,7 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 			gestureUpdated = false;
 		}
 		if (Check_Time () && check) {
-			onGestureEnd.Invoke ();
+			GestureDone ();
 			gestureUpdated = false;
 			check = false;
 		}
@@ -128,7 +129,7 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 		bool isThumb = ! (pointer is PointerFinger);
 
 		if (isThumb) {
-			if (state == State.GESTURE) {
+			if ((state == State.GESTURE) || (state == State.GESTURE_DONE)) {
 				onGestureEnd.Invoke ();
 			}
 			Clean ();
@@ -142,7 +143,10 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 		}
 
 		else {
-			if (state == State.PINCH) {
+			if (state == State.GESTURE_DONE) {
+				onGestureEnd.Invoke ();
+			}
+			if ((state != State.CLEAN) && (state != State.GESTURE)) {
 				Clean ();
 			}
 			state = State.GESTURE;
@@ -199,6 +203,11 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 		fingerStrokes.Clear ();
 
 		state = State.CLEAN;
+	}
+
+	public void GestureDone () {
+		Debug.LogFormat ("GestureDone from {0}", state);
+		state = State.GESTURE_DONE;
 	}
 
 	public bool Check_Time(){
