@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
-<Gesture Name="ㅊ~02">
+<Gesture Name="ㄲ~01">
 	<Stroke index="0">
-	    <Point X="0.500" Y="1.500"/>
 	    <Point X="0.000" Y="1.000"/>
-	    <Point X="1.000" Y="1.000"/>
-	    <Point X="0.000" Y="0.000"/>
+	    <Point X="0.400" Y="1.000"/>
+	    <Point X="0.400" Y="0.000"/>
 	</Stroke>
 	<Stroke index="1">
-	    <Point X="0.500" Y="0.500"/>
+	    <Point X="0.600" Y="1.000"/>
+	    <Point X="1.000" Y="1.000"/>
 	    <Point X="1.000" Y="0.000"/>
 	</Stroke>
 </Gesture>
