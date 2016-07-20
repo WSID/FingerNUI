@@ -149,7 +149,6 @@ public class TipTrackBehaviour : MonoBehaviour {
 	public Pointer[] pointersFoldHand;
 	public Pointer   pointerOpenHand;
 
-
 	// Game Objects
 	private Dictionary<HandModel, DataHand>	tracked_hands = new Dictionary <HandModel, DataHand> ();
 
@@ -175,7 +174,11 @@ public class TipTrackBehaviour : MonoBehaviour {
 
 	public void addHand (HandModel model) {
 		if (! tracked_hands.ContainsKey (model)) {
-			tracked_hands [model] = new DataHand (this, model);
+			DataHand data = new DataHand (this, model);
+
+			data.state = enabled ? DataHand.State.UNPINCH : DataHand.State.DISABLED;
+			tracked_hands [model] = data;
+
 		}
 	}
 
