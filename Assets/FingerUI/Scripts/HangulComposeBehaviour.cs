@@ -61,7 +61,7 @@ using System.Collections;
 public class HangulComposeBehaviour : MonoBehaviour {
 
 
-	// Constants
+	#region Constants and tables.
 	const char CHOSUNG_FIRST = '\u1100';
 	const char CHOSUNG_LAST = '\u1112';
 
@@ -87,7 +87,7 @@ public class HangulComposeBehaviour : MonoBehaviour {
 	const char LETTER_FIRST = '\uac00';
 
 
-	char[] TABLE_LETTER_CHO = new char[] {
+	static char[] TABLE_LETTER_CHO = new char[] {
 		'\u1100',	//ㄱ
 		'\u1101',	//ㄱㄱ
 		'\0',	    //ㄱㅅ
@@ -120,7 +120,7 @@ public class HangulComposeBehaviour : MonoBehaviour {
 		'\u1112' 	//ㅎ
 	};
 
-	char[] TABLE_LETTER_JONG = new char[] {
+	static char[] TABLE_LETTER_JONG = new char[] {
 		'\u11a8',	//ㄱ
 		'\u11a9',	//ㄱㄱ
 		'\u11aa',   //ㄱㅅ
@@ -153,7 +153,7 @@ public class HangulComposeBehaviour : MonoBehaviour {
 		'\u11c2' 	//ㅎ
 	};
 
-	char[] TABLE_CHO_LETTER = new char[] {
+	static char[] TABLE_CHO_LETTER = new char[] {
 		'\u3131',   //ㄱ
 		'\u3132',   //ㄲ
 		'\u3134',   //ㄴ
@@ -175,7 +175,7 @@ public class HangulComposeBehaviour : MonoBehaviour {
 		'\u314e'    //ㅎ
 	};
 
-	char[] TABLE_JONG_LETTER = new char[] {
+	static char[] TABLE_JONG_LETTER = new char[] {
 		'\u3131',   //ㄱ
 		'\u3132',   //ㄱㄱ
 		'\u3133',   //ㄱㅅ
@@ -205,10 +205,222 @@ public class HangulComposeBehaviour : MonoBehaviour {
 		'\u314e'    //ㅎ
 	};
 
+	static char[][] TABLE_JONG_STACK = new char [][] {
+		// ㄱ 
+		new char [] {
+			'\u11a8',   //ㄱ
+			'\0',        //ㄱㄱ
+			'\0',        //ㄱㅅ
+			'\0',        //ㄴ
+			'\0',        //ㄴㅈ
+			'\0',        //ㄴㅎ
+			'\0',        //ㄷ
+			'\0',        //ㄹ
+			'\0',        //ㄹㄱ
+			'\0',        //ㄹㅁ
+			'\0',        //ㄹㅂ
+			'\0',        //ㄹㅅ
+			'\0',        //ㄹㅌ
+			'\0',        //ㄹㅍ
+			'\0',        //ㄹㅎ
+			'\0',        //ㅁ
+			'\0',        //ㅂ
+			'\0',        //ㅂㅅ
+			'\u11aa',   //ㅅ
+			'\0',        //ㅅㅅ
+			'\0',        //ㅇ
+			'\0',        //ㅈ
+			'\0',        //ㅊ
+			'\0',        //ㅋ
+			'\0',        //ㅌ
+			'\0',        //ㅍ
+			'\0',        //ㅎ
+		},
+		null,	// ㄱㄱ
+		null,  // ㄱㅅ
+
+		// ㄴ 
+		new char [] {
+			'\0',        //ㄱ
+			'\0',        //ㄱㄱ
+			'\0',        //ㄱㅅ
+			'\0',        //ㄴ
+			'\0',        //ㄴㅈ
+			'\0',        //ㄴㅎ
+			'\0',        //ㄷ
+			'\0',        //ㄹ
+			'\0',        //ㄹㄱ
+			'\0',        //ㄹㅁ
+			'\0',        //ㄹㅂ
+			'\0',        //ㄹㅅ
+			'\0',        //ㄹㅌ
+			'\0',        //ㄹㅍ
+			'\0',        //ㄹㅎ
+			'\0',        //ㅁ
+			'\0',        //ㅂ
+			'\0',        //ㅂㅅ
+			'\0',        //ㅅ
+			'\0',        //ㅅㅅ
+			'\0',        //ㅇ
+			'\u11ac',   //ㅈ
+			'\0',        //ㅊ
+			'\0',        //ㅋ
+			'\0',        //ㅌ
+			'\0',        //ㅍ
+			'\u11ad',   //ㅎ
+		},
+
+		null, // ㄴㅈ
+		null, // ㄴㅎ
+		null, // ㄷ
+
+		// ㄹ
+		new char [] {
+			'\u11b0',   //ㄱ
+			'\0',        //ㄱㄱ
+			'\0',        //ㄱㅅ
+			'\0',        //ㄴ
+			'\0',        //ㄴㅈ
+			'\0',        //ㄴㅎ
+			'\0',        //ㄷ
+			'\0',        //ㄹ
+			'\0',        //ㄹㄱ
+			'\0',        //ㄹㅁ
+			'\0',        //ㄹㅂ
+			'\0',        //ㄹㅅ
+			'\0',        //ㄹㅌ
+			'\0',        //ㄹㅍ
+			'\0',        //ㄹㅎ
+			'\u11b1',   //ㅁ
+			'\u11b2',   //ㅂ
+			'\0',        //ㅂㅅ
+			'\u11b3',   //ㅅ
+			'\0',        //ㅅㅅ
+			'\0',        //ㅇ
+			'\0',        //ㅈ
+			'\0',        //ㅊ
+			'\0',        //ㅋ
+			'\u11b4',   //ㅌ
+			'\u11b5',   //ㅍ
+			'\u11b6'    //ㅎ
+		},
+		null, // ㄹㄱ
+		null, // ㄹㅁ
+		null, // ㄹㅂ
+		null, // ㄹㅅ
+		null, // ㄹㅌ
+		null, // ㄹㅍ
+		null, // ㄹㅎ
+		null, // ㅁ
+
+		// ㅂ
+		new char [] {
+			'\0',        //ㄱ
+			'\0',        //ㄱㄱ
+			'\0',        //ㄱㅅ
+			'\0',        //ㄴ
+			'\0',        //ㄴㅈ
+			'\0',        //ㄴㅎ
+			'\0',        //ㄷ
+			'\0',        //ㄹ
+			'\0',        //ㄹㄱ
+			'\0',        //ㄹㅁ
+			'\0',        //ㄹㅂ
+			'\0',        //ㄹㅅ
+			'\0',        //ㄹㅌ
+			'\0',        //ㄹㅍ
+			'\0',        //ㄹㅎ
+			'\0',        //ㅁ
+			'\0',        //ㅂ
+			'\0',        //ㅂㅅ
+			'\u11b9',   //ㅅ
+			'\0',        //ㅅㅅ
+			'\0',        //ㅇ
+			'\0',        //ㅈ
+			'\0',        //ㅊ
+			'\0',        //ㅋ
+			'\0',        //ㅌ
+			'\0',        //ㅍ
+			'\0',        //ㅎ
+		},
+		null, // ㅂㅅ
+
+		// ㅅ
+		new char [] {
+			'\0',        //ㄱ
+			'\0',        //ㄱㄱ
+			'\0',        //ㄱㅅ
+			'\0',        //ㄴ
+			'\0',        //ㄴㅈ
+			'\0',        //ㄴㅎ
+			'\0',        //ㄷ
+			'\0',        //ㄹ
+			'\0',        //ㄹㄱ
+			'\0',        //ㄹㅁ
+			'\0',        //ㄹㅂ
+			'\0',        //ㄹㅅ
+			'\0',        //ㄹㅌ
+			'\0',        //ㄹㅍ
+			'\0',        //ㄹㅎ
+			'\0',        //ㅁ
+			'\0',        //ㅂ
+			'\0',        //ㅂㅅ
+			'\u11bb',   //ㅅ
+			'\0',        //ㅅㅅ
+			'\0',        //ㅇ
+			'\0',        //ㅈ
+			'\0',        //ㅊ
+			'\0',        //ㅋ
+			'\0',        //ㅌ
+			'\0',        //ㅍ
+			'\0',        //ㅎ
+		},
+
+		null, // ㅅㅅ
+		null, // ㅇ
+		null, // ㅈ
+		null, // ㅊ
+		null, // ㅋ
+		null, // ㅌ
+		null, // ㅍ
+		null  // ㅎ
+	};
+
+	static char[,] TABLE_JONG_UNSTACK = new char [,] {
+		{'\u11a8' ,'\0' },     //ㄱ
+		{'\u11a8' ,'\u11a8' }, //ㄱㄱ
+		{'\u11a8' ,'\u11ba' }, //ㄱㅅ
+		{'\u11ab' ,'\0' },     //ㄴ
+		{'\u11ab' ,'\u11bd' }, //ㄴㅈ
+		{'\u11ab' ,'\u11c2' }, //ㄴㅎ
+		{'\u11ae' ,'\0' },     //ㄷ
+		{'\u11af' ,'\0' },     //ㄹ
+		{'\u11af' ,'\u11a8' }, //ㄹㄱ
+		{'\u11af' ,'\u11b7' }, //ㄹㅁ
+		{'\u11af' ,'\u11b8' }, //ㄹㅂ
+		{'\u11af' ,'\u11ba' }, //ㄹㅅ
+		{'\u11af' ,'\u11c0' }, //ㄹㅌ
+		{'\u11af' ,'\u11c1' }, //ㄹㅍ
+		{'\u11af' ,'\u11c2' }, //ㄹㅎ
+		{'\u11b7' ,'\0' },     //ㅁ
+		{'\u11b8' ,'\0' },     //ㅂ
+		{'\u11b8' ,'\u11ba' }, //ㅂㅅ
+		{'\u11ba' ,'\0' },     //ㅅ
+		{'\u11ba' ,'\u11ba' }, //ㅅㅅ
+		{'\u11bc' ,'\0' },     //ㅇ
+		{'\u11bd' ,'\0' },     //ㅈ
+		{'\u11be' ,'\0' },     //ㅊ
+		{'\u11bf' ,'\0' },     //ㅋ
+		{'\u11c0' ,'\0' },     //ㅌ
+		{'\u11c1' ,'\0' },     //ㅍ
+		{'\u11c2' ,'\0' }      //ㅎ
+	};
+	#endregion
 
 
-	// Events
 
+
+	#region Events
 	/// <summary>
 	/// Emitted on updating
 	/// </summary>
@@ -224,12 +436,15 @@ public class HangulComposeBehaviour : MonoBehaviour {
 	public StringEvent onEmitString;
 
 	public UnityEvent onDeleteBack;
-
+	#endregion
 
 	// Inner state.
 	private char _chosung;
 	private char _jungsung;
+
 	private char _jongsung;
+	private char _jongsung1;
+	private char _jongsung2;
 
 	[HideInInspector]
 	public char chosung {
@@ -282,8 +497,53 @@ public class HangulComposeBehaviour : MonoBehaviour {
 				Emit ();
 			}
 
-			_jongsung = ToConsonant (value);
+			_jongsung = ToJongsung (value);
+			UnstackJongsung (
+				_jongsung,
+				out _jongsung1,
+				out _jongsung2);
+			
 			onUpdateJongsung.Invoke (_jongsung.ToString () );
+			UpdateLetter ();
+		}
+	}
+
+	public char jongsung1 {
+		get {
+			return _jongsung1;
+		}
+		set {
+			if (value == '\0')
+				return;
+
+			if (jongsungDone1) {
+				Emit ();
+			}
+
+			_jongsung1 = ToJongsung (value);
+			_jongsung = StackJongsung (_jongsung1, _jongsung2);
+
+			onUpdateJongsung.Invoke (_jongsung.ToString ());
+			UpdateLetter ();
+		}
+	}
+
+	public char jongsung2 {
+		get {
+			return _jongsung2;
+		}
+		set {
+			if (value == '\0')
+				return;
+
+			if (jongsungDone2) {
+				Emit ();
+			}
+
+			_jongsung2 = ToJongsung (value);
+			_jongsung = StackJongsung (_jongsung1, _jongsung2);
+
+			onUpdateJongsung.Invoke (_jongsung.ToString ());
 			UpdateLetter ();
 		}
 	}
@@ -292,7 +552,11 @@ public class HangulComposeBehaviour : MonoBehaviour {
 	public bool jungsungDone { get; private set; }
 	public bool jongsungDone { get; private set; }
 
+	public bool jongsungDone1;
+	public bool jongsungDone2;
+
 	public char letter { get; private set; }
+
 
 
 
@@ -309,6 +573,7 @@ public class HangulComposeBehaviour : MonoBehaviour {
 	}
 
 
+
 	public void FinishChosung () {
 		chosungDone = (_chosung != '\0');
 	}
@@ -318,8 +583,21 @@ public class HangulComposeBehaviour : MonoBehaviour {
 	}
 
 	public void FinishJongsung () {
-		jongsungDone = (_jongsung != '\0');
+		jongsungDone1 = (_jongsung1 != '\0');
+		jongsungDone2 = (_jongsung2 != '\0');
+		jongsungDone = jongsungDone1 && jongsungDone2;
 	}
+
+	public void FinishJongsung1 () {
+		jongsungDone1 = (_jongsung1 != '\0');
+		jongsungDone = jongsungDone1 && jongsungDone2;
+	}
+
+	public void FinishJongsung2 () {
+		jongsungDone2 = (_jongsung2 != '\0');
+		jongsungDone = jongsungDone1 && jongsungDone2;
+	}
+
 
 
 
@@ -327,9 +605,12 @@ public class HangulComposeBehaviour : MonoBehaviour {
 	public void FeedConsonant (char input) {
 		if (input == '\0')
 			return;
-
+		
 		if (chosungDone && jungsungDone && (!jongsungDone)) {
-			jongsung = input;
+			if (jongsungDone1)
+				jongsung2 = input;
+			else
+				jongsung1 = input;
 		}
 		else {
 			if (chosungDone)
@@ -340,7 +621,10 @@ public class HangulComposeBehaviour : MonoBehaviour {
 
 	public void FeedConsonantDone () {
 		if (chosungDone && jungsungDone && (!jongsungDone)) {
-			FinishJongsung ();
+			if (jongsungDone1)
+				FinishJongsung2 ();
+			else
+				FinishJongsung1 ();
 		}
 		else {
 			FinishChosung ();
@@ -351,14 +635,26 @@ public class HangulComposeBehaviour : MonoBehaviour {
 		if (input == '\0')
 			return;
 		
-		if (jongsungDone) {
-			char nchosung = jongsung;
+		if (jongsungDone1) {
+			char nchosung;
 
-			_jongsung = '\0';
+			if (jongsungDone2) {
+				nchosung = _jongsung2;
+				_jongsung2 = '\0';
+				_jongsung = _jongsung1;
+			}
+			else {
+				nchosung = _jongsung1;
+				_jongsung1 = '\0';
+				_jongsung = '\0';
+			}
+
 			UpdateLetter ();
 			Emit ();
 
-			chosung = nchosung;
+			Debug.Log (nchosung);
+
+			chosung = ToConsonant (nchosung);
 			chosungDone = true;
 			jungsung = input;
 		} else {
@@ -375,9 +671,19 @@ public class HangulComposeBehaviour : MonoBehaviour {
 	public void DeleteOne () {
 		if (_chosung != '\0') {
 			if (_jungsung != '\0') {
-				if (_jongsung != '\0') {
-					_jongsung = '\0';
-					jongsungDone = false;
+				if (_jongsung1 != '\0') {
+					if (_jongsung2 != '\0') {
+						_jongsung2 = '\0';
+						_jongsung = _jongsung1;
+						jongsungDone = false;
+						jongsungDone2 = false;
+					}
+					else {
+						_jongsung1 = '\0';
+						_jongsung = '\0';
+						jongsungDone = false;
+						jongsungDone1 = false;
+					}
 				}
 				else {
 					_jungsung = '\0';
@@ -391,9 +697,19 @@ public class HangulComposeBehaviour : MonoBehaviour {
 			UpdateLetter ();
 		}
 		else if (_jungsung != '\0') {
-			if (_jongsung != '\0') {
-				_jongsung = '\0';
-				jongsungDone = false;
+			if (_jongsung1 != '\0') {
+				if (_jongsung2 != '\0') {
+					_jongsung2 = '\0';
+					_jongsung = _jongsung1;
+					jongsungDone = false;
+					jongsungDone2 = false;
+				}
+				else {
+					_jongsung1 = '\0';
+					_jongsung = '\0';
+					jongsungDone = false;
+					jongsungDone1 = false;
+				}
 			}
 			else {
 				_jungsung = '\0';
@@ -416,10 +732,14 @@ public class HangulComposeBehaviour : MonoBehaviour {
 		chosungDone = false;
 		jungsungDone = false;
 		jongsungDone = false;
+		jongsungDone1 = false;
+		jongsungDone2 = false;
 
 		_chosung = '\0';
 		_jungsung = '\0';
 		_jongsung = '\0';
+		_jongsung1 = '\0';
+		_jongsung2 = '\0';
 
 		letter = '\0';
 
@@ -452,7 +772,7 @@ public class HangulComposeBehaviour : MonoBehaviour {
 		return (a <= c) && (c <= b);
 	}
 
-	private char ToChosung (char letterChosung) {
+	private static char ToChosung (char letterChosung) {
 		if (IsBetween (letterChosung, LETTER_CONSONANT_FIRST, LETTER_CONSONANT_LAST)) {
 			int index = (int)(letterChosung - LETTER_CONSONANT_FIRST);
 			return TABLE_LETTER_CHO [index];
@@ -463,7 +783,7 @@ public class HangulComposeBehaviour : MonoBehaviour {
 		return '\0';
 	}
 
-	private char ToJungsung (char letterJungsung) {
+	private static char ToJungsung (char letterJungsung) {
 		if (IsBetween (letterJungsung, LETTER_VOWEL_FIRST, LETTER_VOWEL_LAST)) {
 			char index = (char)(letterJungsung - LETTER_VOWEL_FIRST);
 			return (char)(JUNGSUNG_FIRST + index);
@@ -474,7 +794,7 @@ public class HangulComposeBehaviour : MonoBehaviour {
 		return '\0';
 	}
 
-	private char ToJongsung(char letterJongsung) {
+	private static char ToJongsung(char letterJongsung) {
 		if (IsBetween (letterJongsung, LETTER_CONSONANT_FIRST, LETTER_CONSONANT_LAST)) {
 			int index = (int)(letterJongsung - LETTER_CONSONANT_FIRST);
 
@@ -485,18 +805,18 @@ public class HangulComposeBehaviour : MonoBehaviour {
 		return '\0';
 	}
 
-	private char ToConsonant (char chojong) {
+	private static char ToConsonant (char chojong) {
 		int index;
 
 		if (IsBetween (chojong, LETTER_CONSONANT_FIRST, LETTER_CONSONANT_LAST)) {
 			return chojong;
 		}
 		else if (IsBetween (chojong, CHOSUNG_FIRST, CHOSUNG_LAST)) {
-			index = (int)(chosung - CHOSUNG_FIRST);
+			index = (int)(chojong - CHOSUNG_FIRST);
 			return TABLE_CHO_LETTER [index];
 		}
 		else if (IsBetween (chojong, JONGSUNG_FIRST, JONGSUNG_LAST)) {
-			index = (int)(chosung - JONGSUNG_FIRST);
+			index = (int)(chojong - JONGSUNG_FIRST);
 			return TABLE_JONG_LETTER [index];
 		}
 		else {
@@ -504,7 +824,34 @@ public class HangulComposeBehaviour : MonoBehaviour {
 		}	
 	}
 
-	private char Compose (char chosung, char jungsung, char jongsung) {
+	private static  char StackJongsung (char a, char b) {
+		if (b == '\0')
+			return a;
+
+		int index_a = (int)(a - JONGSUNG_FIRST);
+		int index_b = (int)(b - JONGSUNG_FIRST);
+
+		char[] table_a = TABLE_JONG_STACK [index_a];
+
+		if (table_a == null)
+			return '\0';
+
+		return table_a [index_b];
+	}
+
+	private static bool UnstackJongsung (char jongsung, out char a, out char b) {
+		int index = (int)(jongsung - JONGSUNG_FIRST);
+
+		a = TABLE_JONG_UNSTACK [index, 0];
+		b = TABLE_JONG_UNSTACK [index, 1];
+
+		return (b != '\0');
+	}
+
+
+
+
+	private static char Compose (char chosung, char jungsung, char jongsung) {
 		char njongsung = ToJongsung (jongsung);
 		int ichosung;
 		int ijungsung;
