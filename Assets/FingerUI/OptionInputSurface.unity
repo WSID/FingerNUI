@@ -601,10 +601,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eae6b0313d5774a8da63c52f57263b28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minDownVelocity: 10
-  minForwardVelocity: 50
+  minDownVelocity: 5
+  minForwardVelocity: 10
   historySeconds: 1
-  minDownDistance: 3
+  minDownDistance: 1
   minForwardDistance: 5
   minPointDistance: 1.5
   maxNormalAngle: 30
