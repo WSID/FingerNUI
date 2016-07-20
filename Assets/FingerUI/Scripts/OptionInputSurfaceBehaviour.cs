@@ -341,31 +341,18 @@ public class OptionInputSurfaceBehaviour : MonoBehaviour {
 		position = GetAverage (points);
 
 		// normal.
-		Vector3[] normals = new Vector3 [4];
-		normals [0] = GetNormal (points [0], points [1], points [3]);
-		normals [1] = GetNormal (points [1], points [3], points [2]);
-		normals [2] = GetNormal (points [3], points [2], points [0]);
-		normals [3] = GetNormal (points [2], points [0], points [1]);
-
-		// Check normal.
-		// Cos is decreasing in [0, 90]
-		if ((! CheckAngleLess (normals [0], normals [2], maxNormalAngleRad)) ||
-			(! CheckAngleLess (normals [1] , normals [3], maxNormalAngleRad))) {
-			throw new OptionInputSurfaceException (
-				OptionInputSurfaceException.EType.NORMAL);
-		}
+		normal = -GetNormal (points[0], points[1], points[2]);
 
 		// Set normal.
-		normal = - GetAverage (normals);
 		normal.Normalize ();
 
 
 
 		// Up.
-		up = points [0] + points[1] - points [2] - points [3];
+		up = 0.5f * (points [0] + points[1]) - points [2];
 		up.Normalize ();
 
-		left = points [1] + points [3] - points [0] - points [2];
+		left = points [1] - points [0];
 		leftUp = Vector3.Cross (normal, left);
 		leftUp.Normalize ();
 
