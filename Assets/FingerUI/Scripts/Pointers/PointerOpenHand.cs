@@ -13,7 +13,8 @@ public class PointerOpenHand: Pointer {
 
 	protected override void UpdatePointer () {
 		int extendCount = 0;
-		worldPosition = hand.fingers [2].GetTipPosition ();
+		//worldPosition = hand.fingers [2].GetTipPosition ();
+		worldPosition = hand.GetPalmPosition ();
 		position = canvas.transform.InverseTransformPoint (worldPosition);
 
 		foreach (FingerModel fmodel in hand.fingers) {
