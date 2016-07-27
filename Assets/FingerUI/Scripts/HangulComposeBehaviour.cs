@@ -684,15 +684,18 @@ public class HangulComposeBehaviour : MonoBehaviour {
 						jongsungDone = false;
 						jongsungDone1 = false;
 					}
+					onUpdateJongsung.Invoke (_jongsung.ToString ());
 				}
 				else {
 					_jungsung = '\0';
 					jungsungDone = false;
+					onUpdateJungsung.Invoke (_jungsung.ToString ());
 				}
 			}
 			else {
 				_chosung = '\0';
 				chosungDone = false;
+				onUpdateChosung.Invoke (_chosung.ToString ());
 			}
 			UpdateLetter ();
 		}
