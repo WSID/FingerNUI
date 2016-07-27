@@ -62,6 +62,8 @@ public class TipTrackBehaviour : MonoBehaviour {
 
 		}
 
+		public uint InPointerCount;
+
 		public DataHand (TipTrackBehaviour behaviour, HandModel model)
 		{
 			Canvas canvas = FindObjectOfType <Canvas> ();
@@ -83,6 +85,7 @@ public class TipTrackBehaviour : MonoBehaviour {
 			this.pointerOpenHand.enabled = behaviour.enabled;
 
 			this.state = State.UNPINCH;
+			this.InPointerCount = 0;
 		}
 
 		public void Destroy () {
@@ -98,6 +101,8 @@ public class TipTrackBehaviour : MonoBehaviour {
 		}
 
 		public void OnPinchIn () {
+			if (pointerOpenHand.state == Pointer.State.INPUT)
+				InPointerCount = 1;
 		}
 
 		public void OnPinchEnd () {
@@ -111,7 +116,10 @@ public class TipTrackBehaviour : MonoBehaviour {
 		}
 
 		public void OnUnpinchIn () {
-			for (int i = 0; i < 3; i ++) {
+			foreach (Pointer pointer in pointersFoldHand) {
+				if (pointer.state == Pointer.State.INPUT)
+					InPointerCount += 1;
+				
 			}
 		}
 
@@ -134,6 +142,7 @@ public class TipTrackBehaviour : MonoBehaviour {
 
 			state = isPinch ? State.PINCH : State.UNPINCH;
 
+			InPointerCount = 0;
 
 			switch (state) {
 			case State.UNPINCH:
@@ -149,15 +158,42 @@ public class TipTrackBehaviour : MonoBehaviour {
 	public Pointer[] pointersFoldHand;
 	public Pointer   pointerOpenHand;
 
+	public UnityEvent onAnyPointerIn;
+	public UnityEvent onAllPointerOut;
+
 	// Game Objects
 	private Dictionary<HandModel, DataHand>	tracked_hands = new Dictionary <HandModel, DataHand> ();
 
+
+	// Internal properties
+	private bool _IsAnyPointer;
+	private bool IsAnyPointer {
+		get {
+			return _IsAnyPointer;
+		}
+		set {
+			if ((!_IsAnyPointer) && (value)) {
+				onAnyPointerIn.Invoke ();
+			} else if ((_IsAnyPointer) && (!value)) {
+				onAllPointerOut.Invoke ();
+			}
+			_IsAnyPointer = value;
+		}
+	}
+
+
 	// Update is called once per frame
 	void Update () {
+		uint InPointerCount = 0;
+
 		foreach (var pair in tracked_hands)
 		{
-			pair.Value.Update ();
+			DataHand data_hand = pair.Value;
+			data_hand.Update ();
+			InPointerCount += data_hand.InPointerCount;
 		}
+
+		IsAnyPointer = (0 < InPointerCount);
 	}
 
 	void OnEnabled () {
@@ -192,4 +228,5 @@ public class TipTrackBehaviour : MonoBehaviour {
 		}
 	}
 
+	
 }
