@@ -14,7 +14,7 @@ public abstract class Pointer : MonoBehaviour{
 	/// State of Input
 	/// </summary>
 	public static int pointer_In;
-	private enum State
+	public enum State
 	{
 		/// <summary>
 		/// Pointer is out of interest.
@@ -46,7 +46,7 @@ public abstract class Pointer : MonoBehaviour{
 	/// The state of input
 	/// </summary>
 	/// <value>The state.</value>
-	private State state {
+	public State state {
 		get {
 			return _state;
 		}
@@ -188,6 +188,8 @@ public abstract class Pointer : MonoBehaviour{
 				cursorInput.transform.SetParent (canvas.transform, false);
 			}
 		}
+
+		_state = State.OUT;
 	}
 
 	void OnDisable () {
