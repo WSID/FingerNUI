@@ -90,4 +90,21 @@ public class TextFeederBehaviour : MonoBehaviour {
 
 		builder.Length = 0;
 	}
+
+	public void MoveLeft () {
+		int position = target.caretPosition;
+
+		FinishFeeding ();
+
+		target.caretPosition = (position != 0) ? (position - 1) : 0;
+	}
+
+	public void MoveRight () {
+		int position = target.caretPosition;
+		int length = target.text.Length;
+
+		FinishFeeding ();
+
+		target.caretPosition = (length != position) ? (position + 1) : length;
+	}
 }
