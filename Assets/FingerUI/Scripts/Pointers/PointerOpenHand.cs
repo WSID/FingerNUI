@@ -10,10 +10,16 @@ using System;
 ///
 /// Pointer that start input when all of fingers are extended.
 public class PointerOpenHand: Pointer {
+	public float proximityDistance;
 
 	protected override void UpdatePointer () {
 		int extendCount = 0;
-		//worldPosition = hand.fingers [2].GetTipPosition ();
+		Vector3 tipWorldPosition;
+		Vector3 tipPosition;
+
+		tipWorldPosition = hand.fingers [2].GetTipPosition ();
+		tipPosition = canvas.transform.InverseTransformPoint (tipWorldPosition);
+
 		worldPosition = hand.GetPalmPosition ();
 		position = canvas.transform.InverseTransformPoint (worldPosition);
 
@@ -22,6 +28,6 @@ public class PointerOpenHand: Pointer {
 				extendCount++;
 		}
 
-		inputStrength = (extendCount - 2) / 3.0f;
+		inputStrength = (1 + (tipPosition.z / proximityDistance)) * (extendCount - 2) / 3.0f;
 	}
 }
