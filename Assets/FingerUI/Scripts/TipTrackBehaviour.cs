@@ -138,7 +138,7 @@ public class TipTrackBehaviour : MonoBehaviour {
 		public void Update () {
 			bool isPinch;
 
-			isPinch = (pointerOpenHand.inputStrength == 1);
+			isPinch = (pointerOpenHand.inputStrength >= 0.9);
 
 			state = isPinch ? State.PINCH : State.UNPINCH;
 
