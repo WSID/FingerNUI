@@ -135,7 +135,7 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 			Clean ();
 			state = State.PINCH;
 
-			StrokeVisual svisual = new StrokeVisual (transform, pinchRendererTemplate, false, minPointDistance);
+			StrokeVisual svisual = new StrokeVisual (transform, pinchRendererTemplate, true, minPointDistance);
 			fingerStrokes [pointer] = svisual;
 			strokes.Add (svisual);
 
