@@ -206,7 +206,6 @@ public class GesturePointerEventBehaviour : PointerEventBehaviour {
 	}
 
 	public void GestureDone () {
-		Debug.LogFormat ("GestureDone from {0}", state);
 		state = State.GESTURE_DONE;
 	}
 
