@@ -293,9 +293,9 @@ MonoBehaviour:
   sweepSpeed: 600
   sweepAccel: 1200
   sweepInterval: 1
-  rotateSpeed: 20
-  rotateAccel: 40
-  rotateMaxVelocity: 200
+  rotateSpeed: 10
+  rotateAccel: 20
+  rotateMaxVelocity: 100
   rotateInterval: 1
   onSweepLeft:
     m_PersistentCalls:
