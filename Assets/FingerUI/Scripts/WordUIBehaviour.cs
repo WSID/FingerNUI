@@ -12,7 +12,7 @@ public class WordUIBehaviour : MonoBehaviour {
 		}
 
 		set {
-			this.word = word;
+			this._word = value;
 			wordText.text = word;
 		}
 	}
