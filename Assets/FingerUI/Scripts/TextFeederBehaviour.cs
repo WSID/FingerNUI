@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using AlgoLib;
+using UnityEngine.Events;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
@@ -84,6 +85,7 @@ public class TextFeederBehaviour : MonoBehaviour {
 			if (target != null) {
 				FinishFeeding ();
 				target.text = value;
+				target.caretPosition = value.Length;
 			}
 		}
 	}
