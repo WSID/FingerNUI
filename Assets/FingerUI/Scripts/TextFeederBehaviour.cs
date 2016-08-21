@@ -1,17 +1,27 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-
+using AlgoLib;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 
 public class TextFeederBehaviour : MonoBehaviour {
+
+	public Trie<string> words = new Trie<string> ();
+	bool searching = false;
+
+	// Renamed and retyped from TrieEntry<string> result;
+	// To express multiple results.
+	private IEnumerable<TrieEntry<string>> results;
+	public string[] recommend = new string[4];
+	int index;
 
 	[HideInInspector]
 	public char feeding {
 		set {
 			_prevFeeding = _feeding;
 			_feeding = value;
-
+			searching = true;
 			if (target != null) {
 				target.ActivateInputField ();
 
@@ -33,10 +43,49 @@ public class TextFeederBehaviour : MonoBehaviour {
 					target.caretPosition = indexStart;
 				}
 				builder.Length = 0;
+				if (searching) {
+					if (!words.ContainsKey (target.text))
+						words.Add (target.text, null);
+					else {
+						index = 0;
+						results = words.GetByPrefix (target.text);
+
+						// Iterate over results instead of whole trie.
+						foreach (var result in results) {
+							if (index > 3)
+								break;
+							recommend [index++] = result.Key;
+
+							Debug.Log (result.Key);
+						}
+
+						// Put them on the UI
+						index = 0;
+						foreach (var Ui in wordUi) {
+							if (index > 3)
+								break;
+							Ui.gameObject.SetActive (true);
+							Ui.word = recommend [index++];
+						}
+					}
+				}
 			}
 		}
 	}
 
+	public WordUIBehaviour[] wordUi;
+
+	public string text {
+		get {
+			return (target != null) ? target.text : null;
+		}
+		set {
+			if (target != null) {
+				FinishFeeding ();
+				target.text = value;
+			}
+		}
+	}
 
 	// Inner state
 	private char _prevFeeding = '\0';
@@ -50,22 +99,27 @@ public class TextFeederBehaviour : MonoBehaviour {
 	void Start () {
 		builder = new StringBuilder ();
 		target = GetComponent <InputField> ();
+
+		foreach (var Ui in wordUi) {
+			Ui.gameObject.SetActive (false);
+			Ui.feederBehaviour = this;
+		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
 	}
 
 	public void FinishFeeding () {
 		target.caretPosition = target.selectionAnchorPosition;
+		searching = false;
 		_prevFeeding = '\0';
 		_feeding = '\0';
 	}
 
 	public void AddString (string item) {
 		int caret = target.selectionAnchorPosition;
-
+		searching = false;
 		builder.Append (target.text.Substring (0, caret));
 		builder.Append (item);
 		builder.Append (target.text.Substring (caret));
@@ -81,7 +135,7 @@ public class TextFeederBehaviour : MonoBehaviour {
 		int caret = target.selectionAnchorPosition;
 		if (caret == 0)
 			return;
-
+		searching = false;
 		builder.Append (target.text.Substring (0, caret - 1));
 		builder.Append (target.text.Substring (caret));
 
@@ -93,7 +147,7 @@ public class TextFeederBehaviour : MonoBehaviour {
 
 	public void MoveLeft () {
 		int position = target.caretPosition;
-
+		searching = false;
 		FinishFeeding ();
 
 		target.caretPosition = (position != 0) ? (position - 1) : 0;
@@ -102,9 +156,8 @@ public class TextFeederBehaviour : MonoBehaviour {
 	public void MoveRight () {
 		int position = target.caretPosition;
 		int length = target.text.Length;
-
+		searching = false;
 		FinishFeeding ();
-
 		target.caretPosition = (length != position) ? (position + 1) : length;
 	}
 }
