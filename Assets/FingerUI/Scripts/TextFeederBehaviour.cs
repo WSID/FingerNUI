@@ -74,6 +74,7 @@ public class TextFeederBehaviour : MonoBehaviour {
 	}
 
 	public WordUIBehaviour[] wordUi;
+	public UnityEvent onFeedFinished;
 
 	public string text {
 		get {
@@ -115,6 +116,8 @@ public class TextFeederBehaviour : MonoBehaviour {
 		searching = false;
 		_prevFeeding = '\0';
 		_feeding = '\0';
+
+		onFeedFinished.Invoke ();
 	}
 
 	public void AddString (string item) {

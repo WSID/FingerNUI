@@ -4440,6 +4440,22 @@ MonoBehaviour:
   - {fileID: 1756333906}
   - {fileID: 812338990}
   - {fileID: 1851003922}
+  onFeedFinished:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1709669117}
+        m_MethodName: DropLetter
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!1 &1127138204
 GameObject:
   m_ObjectHideFlags: 0
