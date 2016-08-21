@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using AlgoLib;
 using UnityEngine.Events;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
+using AlgoLib;
 
 public class TextFeederBehaviour : MonoBehaviour {
 
@@ -49,24 +49,27 @@ public class TextFeederBehaviour : MonoBehaviour {
 						words.Add (target.text, null);
 					else {
 						index = 0;
-						results = words.GetByPrefix (target.text);
+						int nindex = 0;
 
-						// Iterate over results instead of whole trie.
-						foreach (var result in results) {
-							if (index > 3)
-								break;
-							recommend [index++] = result.Key;
+						if (target.text != null) {
+							results = words.GetByPrefix (target.text);
 
-							Debug.Log (result.Key);
+							// Iterate over results instead of whole trie.
+							foreach (var result in results) {
+								if (index > 3)
+									break;
+								recommend [index++] = result.Key;
+							}
+
+							// Put them on the UI
+							for (nindex = 0; nindex < index; nindex++) {
+								wordUi [nindex].word = recommend [nindex];
+								wordUi [nindex].gameObject.SetActive (true);
+
+							}
 						}
-
-						// Put them on the UI
-						index = 0;
-						foreach (var Ui in wordUi) {
-							if (index > 3)
-								break;
-							Ui.gameObject.SetActive (true);
-							Ui.word = recommend [index++];
+						for (; nindex < 4; nindex++) {
+							wordUi [nindex].gameObject.SetActive (false);
 						}
 					}
 				}
@@ -118,6 +121,9 @@ public class TextFeederBehaviour : MonoBehaviour {
 		searching = false;
 		_prevFeeding = '\0';
 		_feeding = '\0';
+
+		foreach (var Ui in wordUi)
+			Ui.gameObject.SetActive (false);
 
 		onFeedFinished.Invoke ();
 	}
