@@ -339,7 +339,7 @@ MonoBehaviour:
   sweepAccel: 1200
   sweepInterval: 1
   rotateSpeed: 10
-  rotateAccel: 20
+  rotateAccel: 10
   rotateMaxVelocity: 100
   rotateInterval: 1
   onSweepLeft:
