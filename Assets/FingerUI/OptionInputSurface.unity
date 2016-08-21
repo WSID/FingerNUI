@@ -197,6 +197,7 @@ MonoBehaviour:
   duplicateCursor: 0
   cursorReady: {fileID: 305228918}
   cursorInput: {fileID: 2100762549}
+  proximityDistance: 5
 --- !u!1 &305228918
 GameObject:
   m_ObjectHideFlags: 0
@@ -457,6 +458,16 @@ MonoBehaviour:
   pointersFoldHand:
   - {fileID: 1885102487}
   pointerOpenHand: {fileID: 302843109}
+  onAnyPointerIn:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  onAllPointerOut:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!114 &694705612
 MonoBehaviour:
   m_ObjectHideFlags: 0
