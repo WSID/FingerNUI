@@ -35,9 +35,8 @@ public class WordUIBehaviour : MonoBehaviour {
 	}
 
 	public void feed () {
-		if (feederBehaviour != null)
-			; //Do something!
-		
-		// Do finish!
+		if (feederBehaviour != null) {
+			feederBehaviour.text = word;
+		}
 	}
 }
