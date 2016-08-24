@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/FingerUI/Intro.unity
+  - enabled: 1
     path: Assets/FingerUI/FingerUI2.unity
   - enabled: 1
     path: Assets/FingerUI/OptionInputSurface.unity
-  - enabled: 1
-    path: Assets/FingerUI/Intro.unity
