@@ -8,7 +8,7 @@ using System.Collections.Generic;
 public class IntroSceneBehaviour : MonoBehaviour {
 
 	public HandController controller;
-	public Renderer movieRenderer;
+	public Image movieImage;
 
 	public int countdownTime = 5;
 	public Text countdownText;
@@ -19,8 +19,8 @@ public class IntroSceneBehaviour : MonoBehaviour {
 		if (controller == null)
 			controller = GameObject.FindObjectOfType <HandController> ();
 
-		if (movieRenderer != null)
-			movieRenderer.gameObject.SetActive (false);
+		if (movieImage != null)
+			movieImage.gameObject.SetActive (false);
 
 		StartCoroutine ("countdown");
 	}
@@ -53,9 +53,9 @@ public class IntroSceneBehaviour : MonoBehaviour {
 		// Show video!
 		MovieTexture movie = null;
 
-		if (movieRenderer != null) {
-			movieRenderer.gameObject.SetActive (true);
-			movie = movieRenderer.material.mainTexture as MovieTexture;
+		if (movieImage != null) {
+			movieImage.gameObject.SetActive (true);
+			movie = movieImage.material.mainTexture as MovieTexture;
 		}
 
 		if (movie != null) {
