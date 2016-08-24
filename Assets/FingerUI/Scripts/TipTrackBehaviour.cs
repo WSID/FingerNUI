@@ -19,8 +19,8 @@ public class TipTrackBehaviour : MonoBehaviour {
 	private class DataHand
 	{
 		public enum State {
-			UNPINCH,
-			PINCH,
+			FOLDHAND,
+			OPENHAND,
 			DISABLED
 		}
 
@@ -41,21 +41,21 @@ public class TipTrackBehaviour : MonoBehaviour {
 					return;
 
 				switch (_state) {
-				case DataHand.State.UNPINCH:
-					OnUnpinchEnd ();
+				case DataHand.State.FOLDHAND:
+					OnFoldHandEnd ();
 					break;
-				case DataHand.State.PINCH:
-					OnPinchEnd ();
+				case DataHand.State.OPENHAND:
+					OnOpenHandEnd ();
 					break;
 				}
 
 				_state = value;
 				switch (_state) {
-				case DataHand.State.UNPINCH:
-					OnUnpinchBegin ();
+				case DataHand.State.FOLDHAND:
+					OnFoldHandBegin ();
 					break;
-				case DataHand.State.PINCH:
-					OnPinchBegin ();
+				case DataHand.State.OPENHAND:
+					OnOpenHandBegin ();
 					break;
 				}
 			}
@@ -84,7 +84,7 @@ public class TipTrackBehaviour : MonoBehaviour {
 			this.pointerOpenHand.hand = model;
 			this.pointerOpenHand.enabled = behaviour.enabled;
 
-			this.state = State.UNPINCH;
+			this.state = State.FOLDHAND;
 			this.InPointerCount = 0;
 		}
 
@@ -97,25 +97,25 @@ public class TipTrackBehaviour : MonoBehaviour {
 		}
 
 
-		public void OnPinchBegin () {
+		public void OnOpenHandBegin () {
 		}
 
-		public void OnPinchIn () {
+		public void OnOpenHandIn () {
 			if (pointerOpenHand.state == Pointer.State.INPUT)
 				InPointerCount = 1;
 		}
 
-		public void OnPinchEnd () {
+		public void OnOpenHandEnd () {
 		}
 
 
-		public void OnUnpinchBegin () {
+		public void OnFoldHandBegin () {
 			foreach (Pointer pointer in pointersFoldHand) {
 				pointer.enabled = true;
 			}
 		}
 
-		public void OnUnpinchIn () {
+		public void OnFoldHandIn () {
 			foreach (Pointer pointer in pointersFoldHand) {
 				if (pointer.state == Pointer.State.INPUT)
 					InPointerCount += 1;
@@ -123,7 +123,7 @@ public class TipTrackBehaviour : MonoBehaviour {
 			}
 		}
 
-		public void OnUnpinchEnd () {
+		public void OnFoldHandEnd () {
 			foreach (Pointer pointer in pointersFoldHand) {
 				pointer.enabled = false;
 			}
@@ -140,16 +140,16 @@ public class TipTrackBehaviour : MonoBehaviour {
 
 			isPinch = (pointerOpenHand.inputStrength >= 0.9);
 
-			state = isPinch ? State.PINCH : State.UNPINCH;
+			state = isPinch ? State.OPENHAND : State.FOLDHAND;
 
 			InPointerCount = 0;
 
 			switch (state) {
-			case State.UNPINCH:
-				OnUnpinchIn ();
+			case State.FOLDHAND:
+				OnFoldHandIn ();
 				break;
-			case State.PINCH:
-				OnPinchIn ();
+			case State.OPENHAND:
+				OnOpenHandIn ();
 				break;
 			}
 		}
@@ -198,7 +198,7 @@ public class TipTrackBehaviour : MonoBehaviour {
 
 	void OnEnabled () {
 		foreach (var pair in tracked_hands) {
-			pair.Value.state = DataHand.State.UNPINCH;
+			pair.Value.state = DataHand.State.FOLDHAND;
 		}
 	}
 
@@ -212,7 +212,7 @@ public class TipTrackBehaviour : MonoBehaviour {
 		if (! tracked_hands.ContainsKey (model)) {
 			DataHand data = new DataHand (this, model);
 
-			data.state = enabled ? DataHand.State.UNPINCH : DataHand.State.DISABLED;
+			data.state = enabled ? DataHand.State.FOLDHAND : DataHand.State.DISABLED;
 			tracked_hands [model] = data;
 
 		}
