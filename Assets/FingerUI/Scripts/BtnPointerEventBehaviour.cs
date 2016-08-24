@@ -16,7 +16,7 @@ public class BtnPointerEventBehaviour : PointerEventBehaviour {
 	private Color nonpushColor;
 
 	// Use this for initialization
-	void Start () {
+	public virtual void Start () {
 		if (image == null)
 			image = GetComponent<Image> ();
 

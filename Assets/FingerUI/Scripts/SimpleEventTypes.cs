@@ -22,3 +22,6 @@ public class StrokeEvent: UnityEvent<Stroke> {}
 
 [Serializable]
 public class ListStrokeEvent: UnityEvent<List<Stroke>> {}
+
+[Serializable]
+public class BoolEvent: UnityEvent<bool> {}
