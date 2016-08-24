@@ -45,29 +45,38 @@ public class TextFeederBehaviour : MonoBehaviour {
 				}
 				builder.Length = 0;
 				if (searching) {
-					if (!words.ContainsKey (target.text))
-						words.Add (target.text, null);
+					if ((words != null) && (!words.ContainsKey (target.text)))
+						words.Add (target.text, target.text);
 					else {
 						index = 0;
 						int nindex = 0;
 
-						if (target.text != null) {
-							results = words.GetByPrefix (target.text);
-
-							// Iterate over results instead of whole trie.
-							foreach (var result in results) {
+						// If text has some bite of string, get from trie with string as prefix.
+						if (target.text != null && target.text != "") {
+							foreach (var result in words.GetByPrefix (target.text)) {
 								if (index > 3)
 									break;
 								recommend [index++] = result.Key;
 							}
+						}
 
-							// Put them on the UI
-							for (nindex = 0; nindex < index; nindex++) {
-								wordUi [nindex].word = recommend [nindex];
-								wordUi [nindex].gameObject.SetActive (true);
-
+						// If user did not input any text, get all from trie.
+						else {
+							foreach (var result in words) {
+								if (index > 3)
+									break;
+								recommend [index++] = result.Key;
 							}
 						}
+
+
+						// Put them on the UI
+						for (nindex = 0; nindex < index; nindex++) {
+							wordUi [nindex].word = recommend [nindex];
+							wordUi [nindex].gameObject.SetActive (true);
+
+						}
+
 						for (; nindex < 4; nindex++) {
 							wordUi [nindex].gameObject.SetActive (false);
 						}
