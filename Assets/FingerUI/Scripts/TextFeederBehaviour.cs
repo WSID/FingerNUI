@@ -213,8 +213,9 @@ public class TextFeederBehaviour : MonoBehaviour {
 	}
 
 	public void MoveLeft () {
-		int position = target.caretPosition;
 		FinishFeeding ();
+
+		int position = target.caretPosition;
 
 		target.caretPosition = (position != 0) ? (position - 1) : 0;
 
@@ -223,10 +224,11 @@ public class TextFeederBehaviour : MonoBehaviour {
 	}
 
 	public void MoveRight () {
+		FinishFeeding ();
+
 		int position = target.caretPosition;
 		int length = target.text.Length;
 
-		FinishFeeding ();
 		target.caretPosition = (length != position) ? (position + 1) : length;
 
 		if (wordEnd < target.caretPosition)
