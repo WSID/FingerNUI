@@ -163,10 +163,13 @@ public class TextFeederBehaviour : MonoBehaviour {
 	}
 
 	public void AddString (string item) {
-		int caret = target.selectionAnchorPosition;
+		FinishFeeding ();
+
+		int caret = target.caretPosition;
 		builder.Append (target.text.Substring (0, caret));
 		builder.Append (item);
 		builder.Append (target.text.Substring (caret));
+
 
 		// TODO: Check string is word or just space.
 		if (searching) {
