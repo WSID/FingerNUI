@@ -17,16 +17,16 @@ public class TextFeederBehaviour : MonoBehaviour {
 	int index;
 
 	[HideInInspector]
-	public char feeding {
+	public string feeding {
 		set {
 			_prevFeeding = _feeding;
-			_feeding = value;
+			_feeding = value ?? "";
 
 			if (target != null) {
 				if (! searching) {
 					searching = true;
 					wordStart = target.caretPosition;
-					wordEnd = wordStart;
+					wordEnd = wordStart + _feeding.Length;
 				}
 
 				target.ActivateInputField ();
@@ -39,11 +39,11 @@ public class TextFeederBehaviour : MonoBehaviour {
 					builder.Remove (indexStart, indexEnd - indexStart);
 				}
 
-				if (_feeding != '\0') {
+				if (true) {
 					builder.Insert (indexStart, _feeding);
 					target.text = builder.ToString ();
 					target.selectionFocusPosition = indexStart;
-					target.selectionAnchorPosition = indexStart + 1;
+					target.selectionAnchorPosition = indexStart + value.Length;
 				} else {
 					target.text = builder.ToString ();
 					target.caretPosition = indexStart;
@@ -124,8 +124,8 @@ public class TextFeederBehaviour : MonoBehaviour {
 	}
 
 	// Inner state
-	private char _prevFeeding = '\0';
-	private char _feeding = '\0';
+	private string _prevFeeding = "";
+	private string _feeding = "";
 
 	private StringBuilder builder;
 	private InputField target;
@@ -153,8 +153,8 @@ public class TextFeederBehaviour : MonoBehaviour {
 
 	public void FinishFeeding () {
 		target.caretPosition = target.selectionAnchorPosition;
-		_prevFeeding = '\0';
-		_feeding = '\0';
+		_prevFeeding = "";
+		_feeding = "";
 
 		foreach (var Ui in wordUi)
 			Ui.gameObject.SetActive (false);
