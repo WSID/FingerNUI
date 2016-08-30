@@ -36,7 +36,7 @@ public class WordUIBehaviour : MonoBehaviour {
 
 	public void feed () {
 		if (feederBehaviour != null) {
-			feederBehaviour.text = word;
+			feederBehaviour.SetWord (word);
 		}
 	}
 }

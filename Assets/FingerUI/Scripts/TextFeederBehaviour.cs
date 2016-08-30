@@ -9,7 +9,6 @@ using AlgoLib;
 public class TextFeederBehaviour : MonoBehaviour {
 
 	public Trie<string> words = new Trie<string> ();
-	bool searching = false;
 
 	// Renamed and retyped from TrieEntry<string> result;
 	// To express multiple results.
@@ -22,8 +21,14 @@ public class TextFeederBehaviour : MonoBehaviour {
 		set {
 			_prevFeeding = _feeding;
 			_feeding = value;
-			searching = true;
+
 			if (target != null) {
+				if (! searching) {
+					searching = true;
+					wordStart = target.caretPosition;
+					wordEnd = wordStart;
+				}
+
 				target.ActivateInputField ();
 
 				builder.Append (target.text);
@@ -45,15 +50,19 @@ public class TextFeederBehaviour : MonoBehaviour {
 				}
 				builder.Length = 0;
 				if (searching) {
-					if ((words != null) && (!words.ContainsKey (target.text)))
-						words.Add (target.text, target.text);
-					else {
-						index = 0;
-						int nindex = 0;
 
+					if (wordEnd < target.selectionAnchorPosition)
+						wordEnd = target.selectionAnchorPosition;
+					
+					index = 0;
+					int nindex = 0;
+
+					if (wordStart < wordEnd) {
+						string prefix = target.text.Substring (wordStart, wordEnd - wordStart);
+						
 						// If text has some bite of string, get from trie with string as prefix.
-						if (target.text != null && target.text != "") {
-							foreach (var result in words.GetByPrefix (target.text)) {
+						if (prefix != null && prefix != "") {
+							foreach (var result in words.GetByPrefix (prefix)) {
 								if (index > 3)
 									break;
 								recommend [index++] = result.Key;
@@ -86,6 +95,18 @@ public class TextFeederBehaviour : MonoBehaviour {
 		}
 	}
 
+	public bool searching {
+		get { return _searching; }
+		set {
+			if (! value) {
+				foreach (WordUIBehaviour ui in wordUi)
+					ui.gameObject.SetActive (false);
+			}
+
+			_searching = value;
+		}
+	}
+
 	public WordUIBehaviour[] wordUi;
 	public UnityEvent onFeedFinished;
 
@@ -109,6 +130,11 @@ public class TextFeederBehaviour : MonoBehaviour {
 	private StringBuilder builder;
 	private InputField target;
 
+	private bool _searching;
+
+	private int wordStart;
+	private int wordEnd;
+
 
 	// Use this for initialization
 	void Start () {
@@ -127,7 +153,6 @@ public class TextFeederBehaviour : MonoBehaviour {
 
 	public void FinishFeeding () {
 		target.caretPosition = target.selectionAnchorPosition;
-		searching = false;
 		_prevFeeding = '\0';
 		_feeding = '\0';
 
@@ -139,10 +164,23 @@ public class TextFeederBehaviour : MonoBehaviour {
 
 	public void AddString (string item) {
 		int caret = target.selectionAnchorPosition;
-		searching = false;
 		builder.Append (target.text.Substring (0, caret));
 		builder.Append (item);
 		builder.Append (target.text.Substring (caret));
+
+		// TODO: Check string is word or just space.
+		if (searching) {
+			if (wordStart < caret) {
+				string substr = target.text.Substring (wordStart, caret - wordStart);
+
+				Debug.LogFormat ("Add: {0}", substr);
+
+				if (!words.ContainsKey (substr))
+					words.Add (target.text.Substring (wordStart, caret - wordStart), null);
+			}
+				
+			searching = false;
+		}
 
 		target.text = builder.ToString ();
 		target.caretPosition = caret + item.Length;
@@ -155,29 +193,55 @@ public class TextFeederBehaviour : MonoBehaviour {
 		int caret = target.selectionAnchorPosition;
 		if (caret == 0)
 			return;
-		searching = false;
+		
 		builder.Append (target.text.Substring (0, caret - 1));
 		builder.Append (target.text.Substring (caret));
 
 		target.text = builder.ToString ();
 		target.caretPosition = caret - 1;
 
+		if (searching)
+			wordEnd--;
+
+		if ((target.caretPosition < wordStart) || (wordEnd <= wordStart))
+			searching = false;
+
 		builder.Length = 0;
 	}
 
 	public void MoveLeft () {
 		int position = target.caretPosition;
-		searching = false;
 		FinishFeeding ();
 
 		target.caretPosition = (position != 0) ? (position - 1) : 0;
+
+		if (target.caretPosition < wordStart)
+			searching = false;
 	}
 
 	public void MoveRight () {
 		int position = target.caretPosition;
 		int length = target.text.Length;
-		searching = false;
+
 		FinishFeeding ();
 		target.caretPosition = (length != position) ? (position + 1) : length;
+
+		if (wordEnd < target.caretPosition)
+			searching = false;
+	}
+
+
+	public void SetWord (string word) {
+		if (searching) {
+			builder.Length = 0;
+
+			builder.Append (target.text.Substring (0, wordStart));
+			builder.Append (word);
+			builder.Append (target.text.Substring (wordEnd, target.text.Length - wordEnd));
+
+			target.text = builder.ToString ();
+			target.caretPosition = wordStart + word.Length;
+			searching = false;
+		}
 	}
 }
