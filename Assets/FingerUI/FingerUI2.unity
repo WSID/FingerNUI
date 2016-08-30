@@ -4424,7 +4424,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
+        m_CallState: 0
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
 --- !u!1 &1127138204
@@ -6985,9 +6985,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onUpdate:
     m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: CharEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  onUpdateString:
+    m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1089807059}
-        m_MethodName: set_feeding
+      - m_Target: {fileID: 1709669118}
+        m_MethodName: set_text
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6997,12 +7001,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_TypeName: CharEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  onUpdateString:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1709669118}
-        m_MethodName: set_text
+      - m_Target: {fileID: 1089807059}
+        m_MethodName: set_feeding
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
