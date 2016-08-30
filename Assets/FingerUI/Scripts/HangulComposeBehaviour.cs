@@ -746,19 +746,17 @@ public class HangulComposeBehaviour : MonoBehaviour {
 
 		letter = '\0';
 
-		onUpdate.Invoke (letter);
-		onUpdateString.Invoke (letter.ToString ());
+		onUpdate.Invoke ('\0');
+		onUpdateString.Invoke ("");
 		onUpdateChosung.Invoke (chosung.ToString ());
 		onUpdateJungsung.Invoke (jungsung.ToString ());
 		onUpdateJongsung.Invoke (jongsung.ToString ());
-
 	}
 
 	public void UpdateLetter () {
 		letter = Compose (_chosung, _jungsung, _jongsung);
-
 		onUpdate.Invoke (letter);
-		onUpdateString.Invoke (letter.ToString ());
+		onUpdateString.Invoke ((letter != '\0') ? letter.ToString () : "");
 	}
 
 	public void Emit () {
