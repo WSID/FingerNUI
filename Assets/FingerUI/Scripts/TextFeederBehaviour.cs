@@ -43,7 +43,7 @@ public class TextFeederBehaviour : MonoBehaviour {
 					builder.Insert (indexStart, _feeding);
 					target.text = builder.ToString ();
 					target.selectionFocusPosition = indexStart;
-					target.selectionAnchorPosition = indexStart + value.Length;
+					target.selectionAnchorPosition = indexStart + _feeding.Length;
 				} else {
 					target.text = builder.ToString ();
 					target.caretPosition = indexStart;
