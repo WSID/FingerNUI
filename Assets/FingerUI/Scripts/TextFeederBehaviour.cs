@@ -36,19 +36,14 @@ public class TextFeederBehaviour : MonoBehaviour {
 				int indexStart = target.selectionFocusPosition;
 				int indexEnd = target.selectionAnchorPosition;
 
-				if (indexEnd != indexStart) {
+				if (indexEnd != indexStart)
 					builder.Remove (indexStart, indexEnd - indexStart);
-				}
+				
+				builder.Insert (indexStart, _feeding);
+				target.text = builder.ToString ();
+				target.selectionFocusPosition = indexStart;
+				target.selectionAnchorPosition = indexStart + _feeding.Length;
 
-				if (true) {
-					builder.Insert (indexStart, _feeding);
-					target.text = builder.ToString ();
-					target.selectionFocusPosition = indexStart;
-					target.selectionAnchorPosition = indexStart + _feeding.Length;
-				} else {
-					target.text = builder.ToString ();
-					target.caretPosition = indexStart;
-				}
 				builder.Length = 0;
 				if (searching) {
 

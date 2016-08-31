@@ -105,10 +105,8 @@ public class GestureChoBehaviour : MonoBehaviour {
 			pair => pair.Key,
 			pair => pair.Value.ToArray ());
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	}
+
+
 
 
 	/// <summary>

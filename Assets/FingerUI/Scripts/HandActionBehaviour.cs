@@ -2,6 +2,7 @@
 using UnityEngine.Events;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Leap;
 
 /// <summary>
@@ -66,6 +67,7 @@ public class HandActionBehaviour : MonoBehaviour
 
 			Vector3 rotCross = Vector3.Cross (handNor, handNorPrevRot);
 			bool rotRight = (0 < Vector3.Dot (rotCross, handDir));
+
 			float rotAmount = Mathf.Asin (rotCross.magnitude);
 			rotAmount = (rotRight) ? rotAmount : -rotAmount;
 
