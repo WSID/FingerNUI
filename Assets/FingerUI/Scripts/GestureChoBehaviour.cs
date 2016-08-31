@@ -77,7 +77,6 @@ public class GestureChoBehaviour : MonoBehaviour {
 	/// This is recognizer specific states.
 	/// This is required by PDollarGestureRecognizer.
 	private Dictionary <char, Gesture[]> gesturesArray;
-	private Dictionary <char, Result> gesturesResult;
 
 
 
@@ -102,13 +101,9 @@ public class GestureChoBehaviour : MonoBehaviour {
 			gestures.Add (gesture.Name[0], gesture);
 		}
 
-		gesturesArray = new Dictionary<char, Gesture[]> ();
-		gesturesResult = new Dictionary<char, Result> ();
-
-		foreach (KeyValuePair <char, List<Gesture>> pair in gestures) {
-			gesturesArray [pair.Key] =
-				pair.Value.ToArray ();
-		}
+		gesturesArray = gestures.ToDictionary (
+			pair => pair.Key,
+			pair => pair.Value.ToArray ());
 	}
 	
 	// Update is called once per frame
@@ -157,7 +152,7 @@ public class GestureChoBehaviour : MonoBehaviour {
 
 
 		// Gets recognize result by letters.
-		gesturesResult = gesturesArray.ToDictionary (
+		Dictionary<char, Result> gesturesResult = gesturesArray.ToDictionary (
 			pair => pair.Key,
 			pair => PointCloudRecognizer.Classify (input, pair.Value));
 
