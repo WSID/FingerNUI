@@ -54,7 +54,12 @@ public class HandActionBehaviour : MonoBehaviour
 
 			// Rotational.
 			Vector3 handDir = model.GetPalmDirection ();
-			Vector3 handNor = model.GetPalmNormal ();
+			Vector3 handNor =
+				Vector3.ProjectOnPlane(
+					model.fingers[0].GetRay ().direction,
+					handDir
+				).normalized;
+			
 
 			Quaternion handDirRot = Quaternion.FromToRotation (handDirPrev, handDir);
 			Vector3 handNorPrevRot = handDirRot * handNorPrev;
