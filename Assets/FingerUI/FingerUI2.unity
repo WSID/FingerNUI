@@ -337,11 +337,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sweepSpeed: 600
   sweepAccel: 1200
-  sweepInterval: 1
   rotateSpeed: 15
   rotateAccel: 20
   rotateMaxVelocity: 300
-  rotateInterval: 1
+  actionInterval: 0.3
+  oppositeInterval: 1
   onSweepLeft:
     m_PersistentCalls:
       m_Calls:
@@ -4280,8 +4280,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 25.497, y: 256.02}
-  m_SizeDelta: {x: 540.01, y: 53}
+  m_AnchoredPosition: {x: 28, y: 256.01}
+  m_SizeDelta: {x: 535, y: 52.98}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1089807056
 MonoBehaviour:

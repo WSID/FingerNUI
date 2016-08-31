@@ -16,13 +16,15 @@ public class HandActionBehaviour : MonoBehaviour
 		private HandActionBehaviour behaviour;
 		private HandModel model;
 
-		private float sweepTime;
+		private float actionTime;
 		private float rotateTime;
 		private Vector3 palmVelocityPrev;
 
 		private Vector3 handDirPrev;
 		private Vector3 handNorPrev;
 		private float rotSpdPrev;
+
+		private UnityEvent actionPrev;
 
 		public DataHand (HandActionBehaviour behaviour, HandModel model)
 		{
@@ -37,38 +39,18 @@ public class HandActionBehaviour : MonoBehaviour
 			handNorPrev = model.GetPalmNormal ();
 			rotSpdPrev = 0;
 
-			sweepTime = -1;
+			actionTime = -1;
 			rotateTime = -1;
 		}
 
 		public void Update () {
 			float deltaTimeInv = 1.0f / Time.deltaTime;
-
 			float currentTime = Time.time;
+
+			UnityEvent action = null;
+
 			Vector3 palmVelocity = model.GetLeapHand ().PalmVelocity.ToUnity ();
 			Vector3 palmAccel = (palmVelocity - palmVelocityPrev) * deltaTimeInv;
-
-			if (behaviour.sweepInterval < (currentTime - sweepTime)) {
-
-				if ((palmVelocity.x < -behaviour.sweepSpeed) && (palmAccel.x < -behaviour.sweepAccel)) {
-					behaviour.onSweepLeft.Invoke ();
-					sweepTime = currentTime;
-				}
-				else if ((behaviour.sweepSpeed < palmVelocity.x) && (behaviour.sweepAccel < palmAccel.x)) {
-					behaviour.onSweepRight.Invoke ();
-					sweepTime = currentTime;
-				}
-				else if ((palmVelocity.y < -behaviour.sweepSpeed) && (palmAccel.y < -behaviour.sweepAccel)) {
-					behaviour.onSweepDown.Invoke ();
-					sweepTime = currentTime;
-				}
-				else if ((behaviour.sweepSpeed < palmVelocity.y) && (behaviour.sweepAccel < palmAccel.y)) {
-					behaviour.onSweepUp.Invoke ();
-					sweepTime = currentTime;
-				}
-			}
-
-			palmVelocityPrev = palmVelocity;
 
 			// Rotational.
 			Vector3 handDir = model.GetPalmDirection ();
@@ -85,21 +67,57 @@ public class HandActionBehaviour : MonoBehaviour
 			float rotSpd = rotAmount * deltaTimeInv;
 			float rotAcc = rotSpd * deltaTimeInv;
 
+			if (behaviour.actionInterval < (currentTime - actionTime)) {
 
-			if ((behaviour.rotateInterval < (currentTime - rotateTime)) &&
-				(palmVelocity.magnitude < behaviour.rotateMaxVelocity)) {
-				if ((rotSpd < -behaviour.rotateSpeed) && (rotAcc < -behaviour.rotateAccel)) {
-					behaviour.onRotateLeft.Invoke ();
-					rotateTime = currentTime;
-				} else if ((behaviour.rotateSpeed < rotSpd) && (behaviour.rotateAccel < rotAcc)) {
-					behaviour.onRotateRight.Invoke ();
-					rotateTime = currentTime;
+				if ((palmVelocity.x < -behaviour.sweepSpeed) &&
+				    (palmAccel.x < -behaviour.sweepAccel))
+				{
+					action = behaviour.onSweepLeft;
+				}
+				else if ((behaviour.sweepSpeed < palmVelocity.x) &&
+				         (behaviour.sweepAccel < palmAccel.x))
+				{
+					action = behaviour.onSweepRight;
+				}
+				else if ((palmVelocity.y < -behaviour.sweepSpeed) &&
+				         (palmAccel.y < -behaviour.sweepAccel))
+				{
+					action = behaviour.onSweepDown;
+				}
+				else if ((behaviour.sweepSpeed < palmVelocity.y) &&
+				         (behaviour.sweepAccel < palmAccel.y))
+				{
+					action = behaviour.onSweepUp;
+				}
+				else if (palmVelocity.magnitude < behaviour.rotateMaxVelocity)
+				{
+					if ((rotSpd < -behaviour.rotateSpeed) &&
+					    (rotAcc < -behaviour.rotateAccel))
+					{
+						action = behaviour.onRotateLeft;
+					}
+					else if ((behaviour.rotateSpeed < rotSpd) &&
+					         (behaviour.rotateAccel < rotAcc))
+					{
+						action = behaviour.onRotateRight;
+					}
 				}
 			}
+
+			palmVelocityPrev = palmVelocity;
 
 			handDirPrev = handDir;
 			handNorPrev = handNor;
 			rotSpdPrev = rotSpd;
+
+			if ((action != null) &&
+				((action == actionPrev) ||
+					(behaviour.oppositeInterval < (currentTime - actionTime))))
+			{
+				action.Invoke ();
+				actionPrev = action;
+				actionTime = currentTime;
+			}
 		}
 	}
 
@@ -110,17 +128,23 @@ public class HandActionBehaviour : MonoBehaviour
 
 	public float sweepAccel = 1000;
 
-	/// <summary>
-	/// Minimal interval between sweep actions.
-	/// </summary>
-	public float sweepInterval = 1.0f;
-
 	public float rotateSpeed = 20;
 	public float rotateAccel = 100;
 
+	/// <summary>
+	/// Minimum palm velocity for rotation action.
+	/// </summary>
 	public float rotateMaxVelocity = 200;
 
-	public float rotateInterval = 1.0f;
+	/// <summary>
+	/// Minimal interval between same actions.
+	/// </summary>
+	public float actionInterval = 1.0f;
+
+	/// <summary>
+	/// Minimal interval between actions.
+	/// </summary>
+	public float oppositeInterval = 2.5f;
 
 	/// <summary>
 	/// When hand sweeps to left
