@@ -4,6 +4,7 @@ using UnityEngine.Events;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using AlgoLib;
 
 public class TextFeederBehaviour : MonoBehaviour {
@@ -169,19 +170,25 @@ public class TextFeederBehaviour : MonoBehaviour {
 		builder.Append (item);
 		builder.Append (target.text.Substring (caret));
 
-
-		// TODO: Check string is word or just space.
 		if (searching) {
-			if (wordStart < caret) {
-				string substr = target.text.Substring (wordStart, caret - wordStart);
+			int nletter = item.Count (char.IsLetterOrDigit);
 
-				Debug.LogFormat ("Add: {0}", substr);
+			// If item has non letter parts (space, etc,...)
+			if (nletter != item.Length) {
+				if (wordStart < caret) {
+					string substr = target.text.Substring (wordStart, caret + nletter - wordStart);
 
-				if (!words.ContainsKey (substr))
-					words.Add (target.text.Substring (wordStart, caret - wordStart), null);
+					if (!words.ContainsKey (substr))
+						words.Add (substr, null);
+				}
+					
+				searching = false;
 			}
-				
-			searching = false;
+
+			// If item just contains letters, just extend word range.
+			else {
+				wordEnd += nletter;
+			}
 		}
 
 		target.text = builder.ToString ();
