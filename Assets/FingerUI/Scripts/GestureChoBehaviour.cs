@@ -57,9 +57,7 @@ public class GestureChoBehaviour : MonoBehaviour {
 
 	/// <summary>
 	/// Recognized chosung.
-	/// </summary>
-	[HideInInspector]
-	public Result[] recognized;
+    /// </summary>
 	[HideInInspector]
 	public int numberRecognized = 1;
 
@@ -154,50 +152,28 @@ public class GestureChoBehaviour : MonoBehaviour {
 
 
 		Gesture input = new Gesture (gpoints);
-		recognized = new Result [numberRecognized];
 
 		int ni;
 
-		for (ni = 0; ni < numberRecognized; ni++) {
-			recognized [ni] = new Result () {
-				GestureClass = null,
-				Score = 0
-			};
-		}
-
 
 		// Gets recognize result by letters.
-		foreach (KeyValuePair <char, Gesture[]> pair in gesturesArray) {
-			gesturesResult[pair.Key] =
-				PointCloudRecognizer.Classify (input, pair.Value);
-		}
+		gesturesResult = gesturesArray.ToDictionary (
+			pair => pair.Key,
+			pair => PointCloudRecognizer.Classify (input, pair.Value));
 
 		// Gets best resulting letters.
-		foreach (KeyValuePair <char, Result> pair in gesturesResult) {
-			ni = numberRecognized - 1;
-
-			// Gets inserting position.
-			for (; 0 <= ni; ni--) {
-				if (recognized [ni].Score > pair.Value.Score)
-					break;
-			}
-			ni++;
-
-
-			// Insert the item.
-			if (ni < numberRecognized) {
-				for (int j = numberRecognized - 2; ni <= j; j--) {
-					recognized [j + 1] = recognized [j];
-				}
-				recognized [ni] = pair.Value;
-			}
-		}
-
+		List<Result> results = 
+			gesturesResult
+				.OrderByDescending ((pair) => (pair.Value.Score))	// Sort pairs by value's score.
+				.Take (numberRecognized)							// Take 4 pairs.
+				.Select (pair => pair.Value)						// Get pair's value.
+				.ToList ();											// As List
+		
 		// Display them on the button.
 		for (ni = 0; ni < scoreUIs.Length; ni++) {
-			if (ni < recognized.Length) {
+			if (ni < results.Count) {
 				scoreUIs [ni].gameObject.SetActive (true);
-				scoreUIs [ni].setLetter (recognized [ni].Score, recognized [ni].GestureClass [0]);
+				scoreUIs [ni].setLetter (results [ni].Score, results [ni].GestureClass [0]);
 			}
 			else {
 				scoreUIs [ni].gameObject.SetActive (false);
@@ -205,8 +181,8 @@ public class GestureChoBehaviour : MonoBehaviour {
 		}
 
 		// Check for recognization score.
-		if ((0 < recognized.Length) && (thresholeScore <= recognized [0].Score)) {
-			onUpdate.Invoke (recognized [0].GestureClass [0]);
+		if ((0 < results.Count) && (thresholeScore <= results [0].Score)) {
+			onUpdate.Invoke (results [0].GestureClass [0]);
 		}
 		else {
 			onUpdate.Invoke ('\0');
