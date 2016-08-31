@@ -125,16 +125,11 @@ public class GestureChoBehaviour : MonoBehaviour {
 	/// 
 	/// Upon recognization, this will emit event onUpdate with recognized character.
 	public void Recognize (List<Stroke> strokes) {
-		if (strokes.Count == 0)
-			return;
+		if (strokes.Count == 0) return;
 
-		int pcount = 0;
-		foreach (Stroke stroke in strokes) {
-			pcount += stroke.Count;
-		}
+		int pcount = strokes.Sum (s => s.Count);
 
-		if (pcount < thresholePointCount)
-			return;
+		if (pcount < thresholePointCount) return;
 
 		Point[] gpoints = new Point[ pcount ];
 
