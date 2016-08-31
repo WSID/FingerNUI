@@ -652,8 +652,6 @@ public class HangulComposeBehaviour : MonoBehaviour {
 			UpdateLetter ();
 			Emit ();
 
-			Debug.Log (nchosung);
-
 			chosung = ToConsonant (nchosung);
 			chosungDone = true;
 			jungsung = input;
@@ -754,9 +752,23 @@ public class HangulComposeBehaviour : MonoBehaviour {
 	}
 
 	public void UpdateLetter () {
-		letter = Compose (_chosung, _jungsung, _jongsung);
+		char letter_jongsung = (_jongsung != '\0') ? _jongsung : _jongsung1;
+
+		letter = Compose (_chosung, _jungsung, letter_jongsung);
+
 		onUpdate.Invoke (letter);
-		onUpdateString.Invoke ((letter != '\0') ? letter.ToString () : "");
+
+		if (letter == '\0') {
+			onUpdateString.Invoke ("");
+		}
+		else if (_jongsung2 != '\0' && _jongsung == '\0'){
+			onUpdateString.Invoke (new string (new char [] {
+				letter, _jongsung2
+			}));
+		}
+		else {
+			onUpdateString.Invoke (letter.ToString ());
+		}
 	}
 
 	public void Emit () {

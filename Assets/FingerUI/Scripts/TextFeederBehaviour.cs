@@ -26,7 +26,7 @@ public class TextFeederBehaviour : MonoBehaviour {
 				if (! searching) {
 					searching = true;
 					wordStart = target.caretPosition;
-					wordEnd = wordStart + _feeding.Length;
+					wordEnd = wordStart;
 				}
 
 				target.ActivateInputField ();
@@ -51,8 +51,7 @@ public class TextFeederBehaviour : MonoBehaviour {
 				builder.Length = 0;
 				if (searching) {
 
-					if (wordEnd < target.selectionAnchorPosition)
-						wordEnd = target.selectionAnchorPosition;
+					wordEnd = wordEnd + _feeding.Length - _prevFeeding.Length;
 					
 					index = 0;
 					int nindex = 0;
