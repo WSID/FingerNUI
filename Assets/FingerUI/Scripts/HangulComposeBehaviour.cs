@@ -523,7 +523,9 @@ public class HangulComposeBehaviour : MonoBehaviour {
 			_jongsung1 = ToJongsung (value);
 			_jongsung = StackJongsung (_jongsung1, _jongsung2);
 
-			onUpdateJongsung.Invoke (_jongsung.ToString ());
+			char practical_jongsung = (_jongsung != 0) ? _jongsung : _jongsung1;
+
+			onUpdateJongsung.Invoke (practical_jongsung.ToString ());
 			UpdateLetter ();
 		}
 	}
@@ -543,7 +545,9 @@ public class HangulComposeBehaviour : MonoBehaviour {
 			_jongsung2 = ToJongsung (value);
 			_jongsung = StackJongsung (_jongsung1, _jongsung2);
 
-			onUpdateJongsung.Invoke (_jongsung.ToString ());
+			char practical_jongsung = (_jongsung != 0) ? _jongsung : _jongsung1;
+
+			onUpdateJongsung.Invoke (practical_jongsung.ToString ());
 			UpdateLetter ();
 		}
 	}
@@ -682,7 +686,9 @@ public class HangulComposeBehaviour : MonoBehaviour {
 						jongsungDone = false;
 						jongsungDone1 = false;
 					}
-					onUpdateJongsung.Invoke (_jongsung.ToString ());
+					char practical_jongsung = (_jongsung != 0) ? _jongsung : _jongsung1;
+
+					onUpdateJongsung.Invoke (practical_jongsung.ToString ());
 				}
 				else {
 					_jungsung = '\0';
