@@ -116,6 +116,10 @@ public class TextFeederBehaviour : MonoBehaviour {
 		}
 		set {
 			if (target != null) {
+				searching = false;
+				wordStart = 0;
+				wordEnd = 0;
+
 				FinishFeeding ();
 				target.text = value;
 				target.caretPosition = value.Length;
